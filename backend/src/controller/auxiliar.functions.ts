@@ -25,9 +25,9 @@ const validarRespuestaBD = ({
   let mensaje = ''
 
   if (respuestaBD.exito) {
-    const registrosAfectados = (respuestaBD.datos as OkPacket).affectedRows
+    const registrosAfectados = (respuestaBD.datos as OkPacket).affectedRows ?? 0
     respuestaBD.registrosAfectados = registrosAfectados
-    descripcion = mensajesUsuario[nConsulta]
+    descripcion = respuestaBD.descripcion ?? ''
     mensaje = mensajesUsuario[0]
     if (consultaDeLectura) {
       if (
@@ -56,13 +56,13 @@ const validarRespuestaBD = ({
 
 const validarParametrosConsulta = ({
   numeroConsulta,
-  almacenDeConsulas,
+  consultasEspeciales,
   parametros = []
 }: IvalidarParametrosConsulta): IvalidacionParametros => {
   const nConsulta = Number(numeroConsulta)
   const validacionParametros: IvalidacionParametros = {
-    parametrosCorrectos: true,
-    consultaDeLectura: false,
+    parametrosCorrectos: false,
+    consultaDeLectura: true,
     nConsulta,
     consulta: {
       consulta: '',
@@ -74,14 +74,17 @@ const validarParametrosConsulta = ({
   if (consultas[nConsulta] !== undefined && consultas[nConsulta] !== null) {
     const consulta = obtenerConsulta(nConsulta)
     const arregloParametros = parametros
-      .filter((parametro) => parametro !== undefined && parametro !== null)
+      .filter(
+        (parametro) =>
+          parametro !== undefined && parametro !== null && parametro !== ''
+      )
       .map((parametro) => Number(parametro))
 
     validacionParametros.consulta = consulta
     validacionParametros.arregloParametros = arregloParametros
     if (
-      almacenDeConsulas[nConsulta] !== undefined &&
-      almacenDeConsulas[nConsulta] !== null
+      consultasEspeciales[nConsulta] !== undefined &&
+      consultasEspeciales[nConsulta] !== null
     ) {
       validacionParametros.parametrosCorrectos = true
       validacionParametros.consultaDeLectura = false
@@ -108,6 +111,7 @@ const enviarRespuesta = ({
   let respuestaBackend: IrespuestaBackend = {
     exito: false,
     estado: 404,
+    descripcion,
     mensaje
   }
 
@@ -129,8 +133,7 @@ const enviarRespuesta = ({
         mensaje
       }
     }
-  }
-  if (datosConsultaEspecial !== undefined) {
+  } else if (fallo !== undefined && !fallo) {
     respuestaBackend = {
       exito: true,
       estado: 200,
@@ -139,10 +142,12 @@ const enviarRespuesta = ({
       descripcion,
       mensaje
     }
-  } else {
+  } else if (fallo !== undefined && fallo) {
     respuestaBackend = {
       exito: false,
-      estado: 404,
+      estado: 500,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      datosConsultaEspecial,
       descripcion,
       mensaje
     }

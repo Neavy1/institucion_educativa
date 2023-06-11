@@ -78,7 +78,7 @@ export interface IrespuestaBDValidada {
 
 export interface IvalidarParametrosConsulta {
   numeroConsulta: string
-  almacenDeConsulas: IalmacenDeConsulas
+  consultasEspeciales: IconsultasEspeciales
   parametros?: string[]
 }
 export interface IvalidacionParametros {
@@ -116,7 +116,7 @@ export type Iconsultas = Record<
 >
 export type Iconsultas2 = Record<number, Record<number, string>>
 
-export type IalmacenDeConsulas = Record<
+export type IconsultasEspeciales = Record<
   number,
   (parametros: IconsultarBDPOST) => Promise<void>
 >

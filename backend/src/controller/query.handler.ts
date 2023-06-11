@@ -1,9 +1,10 @@
 import type { Request, Response } from 'express'
 import { type RowDataPacket } from 'mysql2'
 import type {
-  IalmacenDeConsulas,
   Ibody,
+  IcompararContrasena,
   IconsultarBDPOST,
+  IconsultasEspeciales,
   IcontrasenaUsuarioBD
 } from '../interfaces'
 import { errores } from '../utils/dictionaries'
@@ -22,7 +23,10 @@ const validarContrasenaUsuario = async ({
 }: IconsultarBDPOST): Promise<void> => {
   const { idUsuario, contrasenaIngresada } = body
   let mensaje: string | undefined
-  let datosParaEnviar
+  let comparacionContrasena: IcompararContrasena = {
+    comparacionExitosa: false,
+    contrasenaCorrecta: false
+  }
 
   const respuestaBD = await consultarEnBD({
     consulta: parametrosValidados.consulta,
@@ -35,30 +39,31 @@ const validarContrasenaUsuario = async ({
     nConsulta: parametrosValidados.nConsulta
   })
 
-  const comparacionContrasena = await validarContrasena({
-    contrasenaIngresada: contrasenaIngresada as string,
-    contrasenaHash: (
-      (
-        respuestaBDValidada.respuestaRevisadaBD.datos as RowDataPacket
-      )[0] as IcontrasenaUsuarioBD
-    ).contrasena_hash
-  })
+  const resultadosConsulta = respuestaBDValidada.respuestaRevisadaBD
+    .datos as RowDataPacket[]
 
-  if (comparacionContrasena.comparacionExitosa) {
-    datosParaEnviar = comparacionContrasena
+  if (resultadosConsulta.length > 0) {
+    comparacionContrasena = await validarContrasena({
+      contrasenaIngresada: contrasenaIngresada as string,
+      contrasenaHash: (resultadosConsulta[0] as IcontrasenaUsuarioBD)
+        .contrasena_hash
+    })
+    mensaje = comparacionContrasena.comparacionExitosa
+      ? undefined
+      : comparacionContrasena.error
   } else {
-    mensaje = comparacionContrasena.error
+    mensaje = errores[7]
   }
 
   enviarRespuesta({
     res,
-    datosConsultaEspecial: datosParaEnviar,
+    datosConsultaEspecial: comparacionContrasena,
     descripcion: respuestaBD.descripcion,
     mensaje
   })
 }
 
-const almacenDeConsulas: IalmacenDeConsulas = {
+const consultasEspeciales: IconsultasEspeciales = {
   23: validarContrasenaUsuario
 }
 
@@ -70,7 +75,7 @@ const manejadorDeConsultas = async (
 
   const parametrosValidados = validarParametrosConsulta({
     numeroConsulta: numeroConsulta as string,
-    almacenDeConsulas,
+    consultasEspeciales,
     parametros: [
       parametro1 as string,
       parametro2 as string,
@@ -81,7 +86,8 @@ const manejadorDeConsultas = async (
   if (!parametrosValidados.parametrosCorrectos) {
     enviarRespuesta({
       res,
-      mensaje: parametrosValidados.mensaje
+      mensaje: parametrosValidados.mensaje,
+      fallo: true
     })
     return
   }
@@ -107,16 +113,17 @@ const manejadorDeConsultas = async (
   } else {
     const nConsulta = parametrosValidados.nConsulta
     if (
-      almacenDeConsulas[nConsulta] !== undefined &&
-      almacenDeConsulas[nConsulta] !== null
+      consultasEspeciales[nConsulta] !== undefined &&
+      consultasEspeciales[nConsulta] !== null
     ) {
-      await almacenDeConsulas[nConsulta]({
+      await consultasEspeciales[nConsulta]({
         res,
         body: req.body as Ibody,
         parametrosValidados
       })
     } else {
       enviarRespuesta({
+        fallo: true,
         res,
         mensaje: errores[6]
       })
