@@ -172,7 +172,7 @@ CREATE TABLE `grupo` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `fk_id_curso` int NOT NULL,
   `numero_grupo` int NOT NULL,
-  `id_docente_asignado` int NOT NULL
+  `fk_id_docente_asignado` int NOT NULL
 );
 
 CREATE TABLE `horario_clase` (
@@ -334,7 +334,7 @@ ALTER TABLE `curso` ADD FOREIGN KEY (`fk_id_asignatura`) REFERENCES `asignatura`
 
 ALTER TABLE `grupo` ADD FOREIGN KEY (`fk_id_curso`) REFERENCES `oferta_academica` (`id_oferta_academica`);
 
-ALTER TABLE `grupo` ADD FOREIGN KEY (`id_docente_asignado`) REFERENCES `detalle_docente` (`id_docente`);
+ALTER TABLE `grupo` ADD FOREIGN KEY (`fk_id_docente_asignado`) REFERENCES `detalle_docente` (`id_docente`);
 
 ALTER TABLE `horario_clase` ADD FOREIGN KEY (`fk_id_grupo`) REFERENCES `grupo` (`id`);
 
@@ -427,7 +427,7 @@ INNER JOIN horario_clase ON grupo.id = horario_clase.fk_id_grupo
 INNER JOIN clase_dia ON horario_clase.fk_id_clase_dia = clase_dia.id_clase_dia
 INNER JOIN clase ON clase_dia.fk_id_clase=clase.id_clase 
 INNER JOIN dia_semana ON clase_dia.fk_id_dia_semana=dia_semana.id_dia_semana 
-INNER JOIN usuario ON grupo.id_docente_asignado=usuario.id_usuario
+INNER JOIN usuario ON grupo.fk_id_docente_asignado=usuario.id_usuario
 INNER JOIN prerequisitos_asignatura ON asignatura.id_asignatura = prerequisitos_asignatura.fk_id_asignatura_prerequisito
 INNER JOIN ubicacion_clase ON horario_clase.fk_id_ubicacion_clase = ubicacion_clase.id_ubicacion_clase
 WHERE asignatura.nombre = "Laboratorio de Software";
@@ -558,8 +558,8 @@ VALUES ('1', 'Semestre 1','Blah blah blah');
 
 
     --Información de grupo o de clase (Suponiendo que este es el curso 1)
-    INSERT INTO curso (id, fk_id_oferta_academica, fk_id_asignatura, fk_id_docente_asignado)
-    VALUES (NULL, '1', 'IS873', '987654321');
+    INSERT INTO curso (id, fk_id_oferta_academica, fk_id_asignatura)
+    VALUES (NULL, '1', 'IS873');
 
     INSERT INTO grupo (id, fk_id_curso, numero_grupo, id_docente_asignado)
     VALUES ('1', '1', '987654321');
@@ -605,7 +605,7 @@ INNER JOIN horario_clase ON grupo.id = horario_clase.fk_id_grupo
 INNER JOIN clase_dia ON horario_clase.fk_id_clase_dia = clase_dia.id_clase_dia
 INNER JOIN clase ON clase_dia.fk_id_clase=clase.id_clase 
 INNER JOIN dia_semana ON clase_dia.fk_id_dia_semana=dia_semana.id_dia_semana 
-INNER JOIN usuario ON grupo.id_docente_asignado=usuario.id_usuario
+INNER JOIN usuario ON grupo.fk_id_docente_asignado=usuario.id_usuario
 INNER JOIN prerequisitos_asignatura ON asignatura.id_asignatura = prerequisitos_asignatura.fk_id_asignatura_prerequisito
 INNER JOIN ubicacion_clase ON horario_clase.fk_id_ubicacion_clase = ubicacion_clase.id_ubicacion_clase
 WHERE asignatura.nombre = "Laboratorio de Software";

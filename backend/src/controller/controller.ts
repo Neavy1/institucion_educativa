@@ -1,28 +1,50 @@
-import { Request, Response } from 'express';
-import { sendResponse } from './auxiliar.functions';
-import { pool } from '../db/db';
+import type { Request, Response } from 'express'
+import { sendResponse } from './auxiliar.functions'
+import { pool } from '../db/db'
+import type { Imysql2Error } from '../interfaces'
 
 // -- Add new user
 // INSERT INTO usuarios (documento_identidad, nombre, correo_institucional, telefono, direccion, tipo_usuario, contrasena)
 // VALUES ('123456789', 'Juan Perez', 'juanperez@universidad.edu.co', '555-1234', 'Calle 123 #45-67', 'Administrativo', 'contrasena123');
 // INSERT INTO programa_academico (nombre)
 // VALUES ('Ingeniería de Sistemas');
-const addNewProgram = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { nombre_programa } = req.body;
-    const [rows] = await pool.query(
-      `INSERT INTO programa_academico (nombre) VALUES (?)`,
-      [nombre_programa]
-    );
-    console.log(rows);
-    sendResponse(res, 200, 'Program successfully added', null, {
-      id: (rows as any).insertId,
-      nombre: nombre_programa,
-    });
-  } catch (error) {
-    return sendResponse(res, 500, 'Failed to add program', error);
-  }
-};
+
+const addNewProgram = (req: Request, res: Response): void => {
+  const { nombrePrograma } = req.body
+
+  pool
+    .query('INSERT INTO programa_academico (nombre) VALUES (?)', [
+      nombrePrograma
+    ])
+    .then(([rows]) => {
+      console.log(rows)
+      sendResponse(res, 200, 'Program successfully added', undefined, {
+        id: (rows as any).insertId,
+        nombre: nombrePrograma
+      })
+    })
+    .catch((error) => {
+      sendResponse(res, 500, 'Failed to add program', error as Imysql2Error)
+    })
+}
+
+// const addNewProgram2 = async (req: Request, res: Response): Promise<void> => {
+//   try {
+//     const { nombrePrograma } = req.body
+//     const [rows] = await pool.query(
+//       'INSERT INTO programa_academico (nombre) VALUES (?)',
+//       [nombrePrograma]
+//     )
+//     console.log(rows)
+//     sendResponse(res, 200, 'Program successfully added', undefined, {
+//       id: (rows as any).insertId,
+//       nombre: nombrePrograma
+//     })
+//   } catch (error) {
+//     sendResponse(res, 500, 'Failed to add program', error as Imysql2Error)
+//   }
+// }
+
 // const addNewUser = async (req: Request, res: Response): Promise<void> => {
 //   try {
 //     const [rows] = await pool.query('SELECT * FROM employee');
@@ -34,17 +56,17 @@ const addNewProgram = async (req: Request, res: Response): Promise<void> => {
 // SELECT * FROM usuarios WHERE documento_identidad = '123456789' AND contrasena = 'contrasena123';
 const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const id = req.params.id;
+    const id = req.params.id
 
     const [rows] = await pool.query(
       'SELECT * FROM usuarios WHERE documento_identidad = ?',
       [id]
-    );
-    sendResponse(res, 200, 'User found', null, rows);
+    )
+    sendResponse(res, 200, 'User found', undefined, rows)
   } catch (error) {
-    sendResponse(res, 500, 'Not found', error);
+    sendResponse(res, 500, 'Not found', error as Imysql2Error)
   }
-};
+}
 
 // const getEmployee = async (req, res) => {
 //   try {
@@ -113,4 +135,4 @@ const login = async (req: Request, res: Response): Promise<void> => {
 //     return res.status(500).json({ message: "Something goes wrong" });
 //   }
 
-export { addNewProgram, login };
+export { addNewProgram, login }

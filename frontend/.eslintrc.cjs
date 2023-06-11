@@ -4,12 +4,19 @@ module.exports = {
     node: true
   },
   // include: ['src/**/*', 'src'],
-  ignorePatterns: ['*.env', '**capacitor.config**', '**vite.config**'],
+  ignorePatterns: [
+    '*.env',
+    '**capacitor.config**',
+    '**vite.config**',
+    '**package-lock**',
+    '**eslintrc**'
+  ],
   extends: [
     'standard-with-typescript',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:react/jsx-runtime'
+    'plugin:react/jsx-runtime',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking'
     // 'plugin:@typescript-eslint/recommended'
   ],
   parserOptions: {
@@ -26,6 +33,11 @@ module.exports = {
     }
   },
   rules: {
+    '@typescript-eslint/no-misused-promises': 'warn', // 'off'
+    '@typescript-eslint/no-unsafe-member-access': 'warn',
+    '@typescript-eslint/no-unsafe-argument': 'warn',
+    '@typescript-eslint/no-unsafe-assignment': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
     'react/prop-types': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': [
