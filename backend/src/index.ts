@@ -1,52 +1,50 @@
-import cookieParser from 'cookie-parser'
-import cors from 'cors'
-import express, {
-  type Application,
-  type NextFunction,
-  type Request,
-  type Response
-} from 'express'
-import logger from 'morgan'
-import path from 'path'
+import express from 'express';
+// tslint:disable-next-line: no-duplicate-imports
+import { Application, Request, Response, NextFunction } from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import cors from 'cors';
 
-import { NODE_ENV, PORT } from './config/config'
-import { enviarRespuesta } from './controller/auxiliar.functions'
-import { type MiError } from './interfaces'
-import { Router } from './routes/index.router'
-import { errores } from './utils/dictionaries'
+import { Router } from './routes/index.router';
+import { NODE_ENV, PORT } from './config/config';
+import { sendResponse } from './controller/auxiliar.functions';
 
-const app: Application = express()
+const app: Application = express();
 
 // view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
-// Middleware
-app.use(cors())
-app.use(logger('dev'))
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
+//Middleware
+app.use(cors());
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-app.use('/', Router)
+//Routes
+app.use('/api', Router);
 
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
-  enviarRespuesta({ res, fallo: true, mensaje: errores[1] })
-})
+  return sendResponse(res, 404, 'Error, ruta no encontrada');
+});
 
 // error handler
-app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   // set locals, only providing error in development
-  res.locals.message = (err as Error).message
-  res.locals.error = req.app.get('env') === 'development' ? err : {}
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status((err as MiError)?.status ?? 500)
-})
+  res.status(err.status || 500);
+  res.render('error');
+});
 
-app.listen(PORT)
-console.log(`Servidor en el puerto: ${PORT}`)
-console.log(`Entorno de Node: ${NODE_ENV}`)
+app.listen(PORT);
+console.log(`Server on port: ${PORT}`);
+console.log(`Node env: ${NODE_ENV}`);
 
-export default app
+export default app;

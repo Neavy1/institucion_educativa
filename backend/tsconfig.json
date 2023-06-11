@@ -10,9 +10,10 @@
     "esModuleInterop": true,
     "strict": true,
     "target": "es6",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
+    "moduleResolution": "node"
   },
   "compileOnSave": true,
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }
