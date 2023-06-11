@@ -3,11 +3,11 @@ import {
   DB_HOST,
   DB_NAME,
   DB_PASSWORD,
-  DB_USER,
-  DB_PORT
+  DB_PORT,
+  DB_USER
 } from '../config/config'
 
-export const pool = createPool({
+export const db = createPool({
   host: DB_HOST,
   user: DB_USER,
   password: DB_PASSWORD,

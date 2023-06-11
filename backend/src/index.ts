@@ -1,24 +1,23 @@
-import express from 'express'
-import {
-  type Application,
-  type Request,
-  type Response,
-  type NextFunction
-} from 'express'
-import path from 'path'
 import cookieParser from 'cookie-parser'
-import logger from 'morgan'
 import cors from 'cors'
+import express, {
+  type Application,
+  type NextFunction,
+  type Request,
+  type Response
+} from 'express'
+import logger from 'morgan'
+import path from 'path'
 
-import { Router } from './routes/index.router'
 import { NODE_ENV, PORT } from './config/config'
-import { sendResponse } from './controller/auxiliar.functions'
+import { enviarRespuesta } from './controller/auxiliar.functions'
+import { type MiError } from './interfaces'
+import { Router } from './routes/index.router'
+import { errores } from './utils/dictionaries'
 
 const app: Application = express()
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'pug')
 
 // Middleware
 app.use(cors())
@@ -29,26 +28,25 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Routes
-app.use('/api', Router)
+app.use('/', Router)
 
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
-  sendResponse(res, 404, 'Error, ruta no encontrada')
+  enviarRespuesta({ res, fallo: true, mensaje: errores[1] })
 })
 
 // error handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
   // set locals, only providing error in development
-  res.locals.message = err.message
+  res.locals.message = (err as Error).message
   res.locals.error = req.app.get('env') === 'development' ? err : {}
 
   // render the error page
-  res.status(err.status ?? 500)
-  res.render('error')
+  res.status((err as MiError)?.status ?? 500)
 })
 
 app.listen(PORT)
-console.log(`Server on port: ${PORT}`)
-console.log(`Node env: ${NODE_ENV}`)
+console.log(`Servidor en el puerto: ${PORT}`)
+console.log(`Entorno de Node: ${NODE_ENV}`)
 
 export default app

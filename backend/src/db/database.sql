@@ -1,764 +1,439 @@
-CREATE DATABASE IF NOT EXISTS institucion_educativa;
-
-USE institucion_educativa;
-
-CREATE TABLE `institucion_educativa` (
-  `id_institucion_educativa` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre_institucion_educativa` varchar(100) NOT NULL,
-  `fecha_fundacion` date NOT NULL,
-  `fk_id_rector` int NOT NULL
-);
-
-CREATE TABLE `facultad` (
-  `id_facultad` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre_facultad` varchar(100) NOT NULL,
-  `ubicacion` varchar(100),
-  `fk_id_institucion_educativa` int NOT NULL,
-  `fk_id_director_facultad` int NOT NULL
-);
-
-CREATE TABLE `departamento` (
-  `id_departamento` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre_departamento` varchar(100) NOT NULL,
-  `fk_id_facultad` int NOT NULL,
-  `fk_id_institucion_educativa` int NOT NULL,
-  `fk_id_jefe_departamento` int NOT NULL
-);
-
-CREATE TABLE `rol` (
-  `id_rol` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre_rol` varchar(50) NOT NULL
-);
-
-CREATE TABLE `permiso` (
-  `id_permiso` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre_permiso` varchar(50) NOT NULL,
-  `descripcion` varchar(100)
-);
-
-CREATE TABLE `sexo` (
-  `id_sexo` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre_sexo` varchar(50) NOT NULL
-);
-
-CREATE TABLE `estado_academico` (
-  `id_estado_academico` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre_estado_academico` varchar(50) NOT NULL
-);
-
-CREATE TABLE `direccion` (
-  `id_direccion` int PRIMARY KEY,
-  `direccion` varchar(100) NOT NULL,
-  `barrio` varchar(100) NOT NULL,
-  `ciudad` varchar(100) NOT NULL,
-  `departamento` varchar(100) NOT NULL
-);
-
-CREATE TABLE `usuario` (
-  `id_usuario` int PRIMARY KEY,
-  `sexo` int NOT NULL,
-  `nombres` varchar(100) NOT NULL,
-  `apellidos` varchar(100) NOT NULL,
-  `correo_electronico` varchar(100) UNIQUE NOT NULL,
-  `telefono` varchar(20) NOT NULL,
-  `contrasena_salt` varchar(100) NOT NULL,
-  `contrasena_hash` varchar(100) NOT NULL
-);
-
-CREATE TABLE `detalle_estudiante` (
-  `id_estudiante` int PRIMARY KEY,
-  `fk_id_estado_academico` int NOT NULL
-);
-
-CREATE TABLE `detalle_docente` (
-  `id_docente` int PRIMARY KEY,
-  `fk_id_departamento` int NOT NULL,
-  `url_hoja_de_vida` varchar(100),
-  `salario` int NOT NULL,
-  `fk_id_tipo_contrato` int NOT NULL
-);
-
-CREATE TABLE `tipo_contrato` (
-  `id_tipo_contrato` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre_contrato` varchar(100) NOT NULL
-);
-
-CREATE TABLE `detalle_administrativo` (
-  `id_administrativo` int PRIMARY KEY
-);
-
-CREATE TABLE `cargo_administrativo` (
-  `id_cargo_administrativo` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre_cargo_administrativo` varchar(100) NOT NULL,
-  `descripcion_cargo_administrativo` varchar(100)
-);
-
-CREATE TABLE `periodo_academico` (
-  `id_periodo_academico` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre` varchar(50) NOT NULL,
-  `descripcion` varchar(50)
-);
-
-CREATE TABLE `anio_periodo_academico` (
-  `id_anio_periodo_academico` int PRIMARY KEY AUTO_INCREMENT,
-  `anio` int,
-  `fk_id_periodo_academico` int NOT NULL,
-  `fk_id_institucion_educativa` int NOT NULL,
-  `fecha_matricula` date NOT NULL,
-  `fecha_inicio` date NOT NULL,
-  `fecha_final` date NOT NULL
-);
-
-CREATE TABLE `programa_academico` (
-  `id_programa_academico` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_facultad` int NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `total_creditos` int NOT NULL,
-  `fk_id_director` int NOT NULL
-);
-
-CREATE TABLE `asignatura` (
-  `id_asignatura` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_departamento` int NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `num_creditos` int,
-  `max_estudiantes` int NOT NULL
-);
-
-CREATE TABLE `dia_semana` (
-  `id_dia_semana` int PRIMARY KEY AUTO_INCREMENT,
-  `nombre_dia_semana` varchar(20) NOT NULL
-);
-
-CREATE TABLE `clase` (
-  `id_clase` int PRIMARY KEY,
-  `hora_inicio` int NOT NULL,
-  `hora_final` int NOT NULL
-);
-
-CREATE TABLE `clase_dia` (
-  `id_clase_dia` int PRIMARY KEY,
-  `fk_id_dia_semana` int NOT NULL,
-  `fk_id_clase` int NOT NULL
-);
-
-CREATE TABLE `ubicacion_clase` (
-  `id_ubicacion_clase` int PRIMARY KEY,
-  `id_edificio` int,
-  `id_salon` int,
-  `nombre` varchar(100),
-  `descripcion` varchar(150)
-);
-
-CREATE TABLE `oferta_academica` (
-  `id_oferta_academica` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_anio_periodo_academico` int NOT NULL,
-  `fk_id_programa_academico` int NOT NULL
-);
-
-CREATE TABLE `matricula_academica` (
-  `id_matricula_academica` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_oferta_academica` int NOT NULL,
-  `fk_id_estudiante` int NOT NULL
-);
-
-CREATE TABLE `curso` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_oferta_academica` int NOT NULL,
-  `fk_id_asignatura` int NOT NULL
-);
-
-CREATE TABLE `grupo` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_curso` int NOT NULL,
-  `numero_grupo` int NOT NULL,
-  `fk_id_docente_asignado` int NOT NULL
-);
-
-CREATE TABLE `horario_clase` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_grupo` int NOT NULL,
-  `fk_id_clase_dia` int NOT NULL,
-  `fk_id_ubicacion_clase` int NOT NULL
-);
-
-CREATE TABLE `historial_academico` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_grupo` int NOT NULL,
-  `fk_id_estudiante` int NOT NULL,
-  `nota_estudiante_curso` float
-);
-
-CREATE TABLE `nota_estudiante_asignatura_matriculada` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_matricula_academica` int NOT NULL,
-  `fk_id_asignatura` int NOT NULL,
-  `nota_final_estudiante_asignatura` int
-);
-
-CREATE TABLE `creditos_aprobados_estudiante_programa_academico` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_estudiante` int,
-  `fk_id_programa_academico` int NOT NULL,
-  `total_creditos_aprobados` int
-);
-
-CREATE TABLE `prerequisitos_asignatura` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_asignatura` int NOT NULL,
-  `fk_id_asignatura_prerequisito` int NOT NULL
-);
-
-CREATE TABLE `rol_permiso` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_rol` int NOT NULL,
-  `fk_id_permiso` int NOT NULL
-);
-
-CREATE TABLE `asignacion_roles` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_usuario` int NOT NULL,
-  `fk_id_rol` int NOT NULL
-);
-
-CREATE TABLE `docente_asignatura` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_docente` int NOT NULL,
-  `fk_id_asignatura` int NOT NULL
-);
-
-CREATE TABLE `pensum_programa_academico` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_programa_academico` int NOT NULL,
-  `fk_id_asignatura` int NOT NULL
-);
-
-CREATE TABLE `detalle_administrativo_cargo_administrativo` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fk_id_administrativo` int NOT NULL,
-  `fk_id_cargo_administrativo` int NOT NULL
-);
-
--------------------------------------------------------- ÍNDICES --------------------------------------------------------
-CREATE UNIQUE INDEX `anio_periodo_academico_index_0` ON `anio_periodo_academico` (`anio`, `fk_id_periodo_academico`);
-
-CREATE UNIQUE INDEX `clase_index_1` ON `clase` (`hora_inicio`, `hora_final`);
-
-CREATE UNIQUE INDEX `clase_dia_index_2` ON `clase_dia` (`fk_id_dia_semana`, `fk_id_clase`);
-
-CREATE UNIQUE INDEX `oferta_academica_index_3` ON `oferta_academica` (`fk_id_anio_periodo_academico`, `fk_id_programa_academico`);
-
-CREATE UNIQUE INDEX `matricula_academica_index_4` ON `matricula_academica` (`fk_id_oferta_academica`, `fk_id_estudiante`);
-
-CREATE UNIQUE INDEX `curso_index_5` ON `curso` (`fk_id_oferta_academica`, `fk_id_asignatura`);
-
-CREATE UNIQUE INDEX `grupo_index_6` ON `grupo` (`fk_id_curso`, `numero_grupo`);
-
-CREATE UNIQUE INDEX `horario_clase_index_7` ON `horario_clase` (`fk_id_grupo`, `fk_id_clase_dia`);
-
-CREATE UNIQUE INDEX `horario_clase_index_8` ON `horario_clase` (`fk_id_clase_dia`, `fk_id_ubicacion_clase`);
-
-CREATE UNIQUE INDEX `historial_academico_index_9` ON `historial_academico` (`fk_id_grupo`, `fk_id_estudiante`);
-
-CREATE UNIQUE INDEX `nota_estudiante_asignatura_matriculada_index_10` ON `nota_estudiante_asignatura_matriculada` (`fk_id_matricula_academica`, `fk_id_asignatura`);
-
-CREATE UNIQUE INDEX `creditos_aprobados_estudiante_programa_academico_index_11` ON `creditos_aprobados_estudiante_programa_academico` (`fk_id_estudiante`, `fk_id_programa_academico`);
-
-CREATE UNIQUE INDEX `prerequisitos_asignatura_index_12` ON `prerequisitos_asignatura` (`fk_id_asignatura`, `fk_id_asignatura_prerequisito`);
-
-CREATE UNIQUE INDEX `rol_permiso_index_13` ON `rol_permiso` (`fk_id_rol`, `fk_id_permiso`);
-
-CREATE UNIQUE INDEX `asignacion_roles_index_14` ON `asignacion_roles` (`fk_id_usuario`, `fk_id_rol`);
-
-CREATE UNIQUE INDEX `docente_asignatura_index_15` ON `docente_asignatura` (`fk_id_docente`, `fk_id_asignatura`);
-
-CREATE UNIQUE INDEX `pensum_programa_academico_index_16` ON `pensum_programa_academico` (`fk_id_programa_academico`, `fk_id_asignatura`);
-
-CREATE UNIQUE INDEX `detalle_administrativo_cargo_administrativo_index_17` ON `detalle_administrativo_cargo_administrativo` (`fk_id_administrativo`, `fk_id_cargo_administrativo`);
-
--------------------------------------------------------- LLAVES FORÁNEAS --------------------------------------------------------
-
-ALTER TABLE `institucion_educativa` ADD FOREIGN KEY (`fk_id_rector`) REFERENCES `detalle_administrativo` (`id_administrativo`);
-
-ALTER TABLE `facultad` ADD FOREIGN KEY (`fk_id_institucion_educativa`) REFERENCES `institucion_educativa` (`id_institucion_educativa`);
-
-ALTER TABLE `facultad` ADD FOREIGN KEY (`fk_id_director_facultad`) REFERENCES `detalle_administrativo` (`id_administrativo`);
-
-ALTER TABLE `departamento` ADD FOREIGN KEY (`fk_id_facultad`) REFERENCES `facultad` (`id_facultad`);
-
-ALTER TABLE `departamento` ADD FOREIGN KEY (`fk_id_institucion_educativa`) REFERENCES `institucion_educativa` (`id_institucion_educativa`);
-
-ALTER TABLE `departamento` ADD FOREIGN KEY (`fk_id_jefe_departamento`) REFERENCES `detalle_administrativo` (`id_administrativo`);
-
-ALTER TABLE `direccion` ADD FOREIGN KEY (`id_direccion`) REFERENCES `usuario` (`id_usuario`);
-
-ALTER TABLE `usuario` ADD FOREIGN KEY (`sexo`) REFERENCES `sexo` (`id_sexo`);
-
-ALTER TABLE `detalle_estudiante` ADD FOREIGN KEY (`id_estudiante`) REFERENCES `usuario` (`id_usuario`);
-
-ALTER TABLE `detalle_estudiante` ADD FOREIGN KEY (`fk_id_estado_academico`) REFERENCES `estado_academico` (`id_estado_academico`);
-
-ALTER TABLE `detalle_docente` ADD FOREIGN KEY (`id_docente`) REFERENCES `usuario` (`id_usuario`);
-
-ALTER TABLE `detalle_docente` ADD FOREIGN KEY (`fk_id_departamento`) REFERENCES `departamento` (`id_departamento`);
-
-ALTER TABLE `detalle_docente` ADD FOREIGN KEY (`fk_id_tipo_contrato`) REFERENCES `tipo_contrato` (`id_tipo_contrato`);
-
-ALTER TABLE `detalle_administrativo` ADD FOREIGN KEY (`id_administrativo`) REFERENCES `usuario` (`id_usuario`);
-
-ALTER TABLE `anio_periodo_academico` ADD FOREIGN KEY (`fk_id_periodo_academico`) REFERENCES `periodo_academico` (`id_periodo_academico`);
-
-ALTER TABLE `anio_periodo_academico` ADD FOREIGN KEY (`fk_id_institucion_educativa`) REFERENCES `institucion_educativa` (`id_institucion_educativa`);
-
-ALTER TABLE `programa_academico` ADD FOREIGN KEY (`fk_id_facultad`) REFERENCES `facultad` (`id_facultad`);
-
-ALTER TABLE `programa_academico` ADD FOREIGN KEY (`fk_id_director`) REFERENCES `detalle_administrativo` (`id_administrativo`);
-
-ALTER TABLE `asignatura` ADD FOREIGN KEY (`fk_id_departamento`) REFERENCES `departamento` (`id_departamento`);
-
-ALTER TABLE `clase_dia` ADD FOREIGN KEY (`fk_id_dia_semana`) REFERENCES `dia_semana` (`id_dia_semana`);
-
-ALTER TABLE `clase_dia` ADD FOREIGN KEY (`fk_id_clase`) REFERENCES `dia_semana` (`id_dia_semana`);
-
-ALTER TABLE `oferta_academica` ADD FOREIGN KEY (`fk_id_anio_periodo_academico`) REFERENCES `anio_periodo_academico` (`id_anio_periodo_academico`);
-
-ALTER TABLE `oferta_academica` ADD FOREIGN KEY (`fk_id_programa_academico`) REFERENCES `programa_academico` (`id_programa_academico`);
-
-ALTER TABLE `matricula_academica` ADD FOREIGN KEY (`fk_id_oferta_academica`) REFERENCES `oferta_academica` (`id_oferta_academica`);
-
-ALTER TABLE `matricula_academica` ADD FOREIGN KEY (`fk_id_estudiante`) REFERENCES `detalle_estudiante` (`id_estudiante`);
-
-ALTER TABLE `curso` ADD FOREIGN KEY (`fk_id_oferta_academica`) REFERENCES `oferta_academica` (`id_oferta_academica`);
-
-ALTER TABLE `curso` ADD FOREIGN KEY (`fk_id_asignatura`) REFERENCES `asignatura` (`id_asignatura`);
-
-ALTER TABLE `grupo` ADD FOREIGN KEY (`fk_id_curso`) REFERENCES `oferta_academica` (`id_oferta_academica`);
-
-ALTER TABLE `grupo` ADD FOREIGN KEY (`fk_id_docente_asignado`) REFERENCES `detalle_docente` (`id_docente`);
-
-ALTER TABLE `horario_clase` ADD FOREIGN KEY (`fk_id_grupo`) REFERENCES `grupo` (`id`);
-
-ALTER TABLE `horario_clase` ADD FOREIGN KEY (`fk_id_clase_dia`) REFERENCES `clase_dia` (`id_clase_dia`);
-
-ALTER TABLE `horario_clase` ADD FOREIGN KEY (`fk_id_ubicacion_clase`) REFERENCES `ubicacion_clase` (`id_ubicacion_clase`);
-
-ALTER TABLE `historial_academico` ADD FOREIGN KEY (`fk_id_grupo`) REFERENCES `grupo` (`id`);
-
-ALTER TABLE `historial_academico` ADD FOREIGN KEY (`fk_id_estudiante`) REFERENCES `detalle_estudiante` (`id_estudiante`);
-
-ALTER TABLE `nota_estudiante_asignatura_matriculada` ADD FOREIGN KEY (`fk_id_matricula_academica`) REFERENCES `matricula_academica` (`id_matricula_academica`);
-
-ALTER TABLE `nota_estudiante_asignatura_matriculada` ADD FOREIGN KEY (`fk_id_asignatura`) REFERENCES `asignatura` (`id_asignatura`);
-
-ALTER TABLE `creditos_aprobados_estudiante_programa_academico` ADD FOREIGN KEY (`fk_id_estudiante`) REFERENCES `detalle_estudiante` (`id_estudiante`);
-
-ALTER TABLE `creditos_aprobados_estudiante_programa_academico` ADD FOREIGN KEY (`fk_id_programa_academico`) REFERENCES `programa_academico` (`id_programa_academico`);
-
-ALTER TABLE `prerequisitos_asignatura` ADD FOREIGN KEY (`fk_id_asignatura`) REFERENCES `asignatura` (`id_asignatura`);
-
-ALTER TABLE `prerequisitos_asignatura` ADD FOREIGN KEY (`fk_id_asignatura_prerequisito`) REFERENCES `asignatura` (`id_asignatura`);
-
-ALTER TABLE `rol_permiso` ADD FOREIGN KEY (`fk_id_rol`) REFERENCES `rol` (`id_rol`);
-
-ALTER TABLE `rol_permiso` ADD FOREIGN KEY (`fk_id_permiso`) REFERENCES `permiso` (`id_permiso`);
-
-ALTER TABLE `asignacion_roles` ADD FOREIGN KEY (`fk_id_usuario`) REFERENCES `usuario` (`id_usuario`);
-
-ALTER TABLE `asignacion_roles` ADD FOREIGN KEY (`fk_id_rol`) REFERENCES `rol` (`id_rol`);
-
-ALTER TABLE `docente_asignatura` ADD FOREIGN KEY (`fk_id_docente`) REFERENCES `detalle_docente` (`id_docente`);
-
-ALTER TABLE `docente_asignatura` ADD FOREIGN KEY (`fk_id_asignatura`) REFERENCES `asignatura` (`id_asignatura`);
-
-ALTER TABLE `pensum_programa_academico` ADD FOREIGN KEY (`fk_id_programa_academico`) REFERENCES `programa_academico` (`id_programa_academico`);
-
-ALTER TABLE `pensum_programa_academico` ADD FOREIGN KEY (`fk_id_asignatura`) REFERENCES `asignatura` (`id_asignatura`);
-
-ALTER TABLE `detalle_administrativo_cargo_administrativo` ADD FOREIGN KEY (`fk_id_administrativo`) REFERENCES `detalle_administrativo` (`id_administrativo`);
-
-ALTER TABLE `detalle_administrativo_cargo_administrativo` ADD FOREIGN KEY (`fk_id_cargo_administrativo`) REFERENCES `cargo_administrativo` (`id_cargo_administrativo`);
-
--------------------------------------------------------- TRIGGERS --------------------------------------------------------
-
--- 1. validar que un estudiante no pueda matricular una asignatura que ya aprobó en la tabla nota_estudiante_asignatura_matriculada
-DELIMITER $$
-CREATE TRIGGER validar_asignatura_abrobada
-BEFORE INSERT ON nota_estudiante_asignatura_matriculada
-FOR EACH ROW
-BEGIN
-  DECLARE nota_existente FLOAT;
-  -- Obtener la nota final de la asignatura para el estudiante actual
-  SELECT nota_final_estudiante_asignatura INTO nota_existente
-  FROM nota_estudiante_asignatura_matriculada
-  WHERE fk_id_matricula_academica = NEW.fk_id_matricula_academica
-    AND fk_id_asignatura = NEW.fk_id_asignatura
-    AND nota_final_estudiante_asignatura >= 3.0
-  LIMIT 1;
-  -- Verificar si el estudiante ya ha aprobado la asignatura
-  IF nota_existente IS NOT NULL THEN
-    SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'El estudiante ya ha aprobado la asignatura';
-  END IF;
-END$$
-DELIMITER ; 
-
--------------------------------------------------------- CONSULTAS --------------------------------------------------------
-
------------------------------------------------------ NO REVISADAS PERO NI PROBADAS -----------------------------------------------------
-
--- Obtener información resumida cursos de extensión
-SELECT asignatura.nombre, asignatura.num_creditos, clase.hora_inicio, clase.hora_final, dia_semana.nombre_dia_semana
-FROM asignatura 
-INNER JOIN curso ON asignatura.id_asignatura = curso.fk_id_asignatura
-INNER JOIN grupo ON curso.id = grupo.fk_id_curso
-INNER JOIN horario_clase ON grupo.id = horario_clase.fk_id_grupo
-INNER JOIN clase_dia ON horario_clase.fk_id_clase_dia = clase_dia.id_clase_dia
-INNER JOIN clase ON clase_dia.fk_id_clase=clase.id_clase 
-INNER JOIN dia_semana ON clase_dia.fk_id_dia_semana=dia_semana.id_dia_semana
-
--- Obtener información curso de extensión en detalle 
-SELECT asignatura.nombre, asignatura.num_creditos, asignatura.max_estudiantes, prerequisitos_asignatura.fk_id_asignatura_prerequisito,
-       clase.hora_inicio, clase.hora_final, dia_semana.nombre_dia_semana, usuario.nombres AS nombre_docente, usuario.apellidos AS apellidos_docente,
-       ubicacion_clase.id_edificio, ubicacion_clase.id_salon
-FROM asignatura 
-INNER JOIN curso ON asignatura.id_asignatura = curso.fk_id_asignatura
-INNER JOIN grupo ON curso.id = grupo.fk_id_curso
-INNER JOIN horario_clase ON grupo.id = horario_clase.fk_id_grupo
-INNER JOIN clase_dia ON horario_clase.fk_id_clase_dia = clase_dia.id_clase_dia
-INNER JOIN clase ON clase_dia.fk_id_clase=clase.id_clase 
-INNER JOIN dia_semana ON clase_dia.fk_id_dia_semana=dia_semana.id_dia_semana 
-INNER JOIN usuario ON grupo.fk_id_docente_asignado=usuario.id_usuario
-INNER JOIN prerequisitos_asignatura ON asignatura.id_asignatura = prerequisitos_asignatura.fk_id_asignatura_prerequisito
-INNER JOIN ubicacion_clase ON horario_clase.fk_id_ubicacion_clase = ubicacion_clase.id_ubicacion_clase
-WHERE asignatura.nombre = "Laboratorio de Software";
-
-    --Para obtener el nombre de la asignatura prerrequisito
-    SELECT asignatura.nombre
-    FROM asignatura 
-    INNER JOIN prerequisitos_asignatura ON asignatura.id_asignatura = prerequisitos_asignatura.fk_id_asignatura_prerequisito
-    WHERE prerequisitos_asignatura.fk_id_asignatura_prerequisito = "IS673"
-
-
--- Log in, no sé cual de los campos de contrasena se debe utilizar :°D (pero creo que se entiende la idea)
-SELECT usuario.id_usuario, usuario.contrasena, asignacion_roles.fk_id_rol, usuario.nombres, usuario.apellidos
-FROM usuario 
-INNER JOIN asignacion_roles ON usuario.id_usuario=asignacion_roles.fk_id_usuario
-WHERE usuario.id_usuario = '123456789' AND usuario.contrasena = 'contrasena123'; 
-
--- Ver informacion personal 
-SELECT  usuario.sexo, usuario.nombres, usuario.apellidos, usuario.correo_electronico, usuario.telefono, usuario.contrasena_salt,
-        direccion.direccion, direccion.barrio, direccion.ciudad, direccion.departamento
-FROM usuario 
-INNER JOIN direccion ON usuario.id_usuario=direccion.id_direccion
-WHERE usuario.id_usuario="12345";
-           
--- Ver información laboral
-SELECT detalle_docente.url_hoja_de_vida, detalle_docente.salario, tipo_contrato.nombre_contrato, departamento.nombre_departamento
-FROM detalle_docente 
-INNER JOIN tipo_contrato ON detalle_docente.fk_id_tipo_contrato = tipo_contrato.id_tipo_contrato
-INNER JOIN departamento ON detalle_docente.fk_id_departamento = departamento.nombre_departamento
-WHERE detalle_docente.id_docente ="12345";
-
-
-  -- Insertar tipo contrato (si sabe bien cuales son se pueden agregar)
-    INSERT INTO tipo_contrato (id_tipo_contrato, nombre_contrato)
-    VALUES ('1', 'Planta'), ('2', 'Transitorio'), ('3', 'Catedratico');
-
-
--- Ver información académica (créditos disponibles es un valor estático en la UTP son como 27 creditos por semestre)
--- Nota: no sé como poner la ubicación semestral
-SELECT estado_academico.nombre_estado_academico, programa_academico.nombre AS programa_academico, SUM(asignatura.num_creditos) AS creditos_matriculados
-FROM detalle_estudiante 
-INNER JOIN estado_academico ON detalle_estudiante.fk_id_estado_academico = estado_academico.id_estado_academico
-INNER JOIN matricula_academica ON matricula_academica.fk_id_estudiante = detalle_estudiante.id_estudiante
-INNER JOIN oferta_academica ON oferta_academica.id_oferta_academica = matricula_academica.fk_id_oferta_academica
-INNER JOIN programa_academico ON programa_academico.id_programa_academico = oferta_academica.fk_id_programa_academico
-INNER JOIN curso ON oferta_academica.id_oferta_academica = curso.fk_id_oferta_academica
-INNER JOIN asignatura ON curso.fk_id_asignatura = asignatura.id_asignatura
-WHERE detalle_estudiante.id_estudiante = "12345"
-
-    -- Insertar estado academico (si sabe bien cuales son se pueden agregar)
-    INSERT INTO estado_academico (id_estado_academico, nombre_estado_academico)
-    VALUES ('1', 'Activo'), ('2', 'Inactivo');
-
--- Editar perfil (Para la direccion tendría que poner en el formulario los campos necesarios)
-UPDATE usuarios SET telefono = '555-4321' WHERE documento_identidad = '123456789';
-UPDATE direccion SET direccion = 'Carrera 1 Calle 2-3' WHERE id_direccion = '123456789';
-
--- Registrar informacion personal y de usuario de nuevo usuario (suponiendo que id_rol 1 equivale a Administrativo)
-INSERT INTO direccion(id_direccion, direccion, barrio, ciudad, departamento)
-VALUES ('123456789', 'Carrera 1 Calle 2-3', 'Un barrio','Pereira', 'Risaralda');
-
-INSERT INTO usuario (id_usuario, sexo, nombres, apellidos, correo_electronico, telefono, contrasena_salt, contrasena.hash)
-VALUES ('123456789', '1', 'Juan','Perez', 'juanperez@institucion.edu.co', '555-1234', '123', 'contrasena123','ef4536abcd689');
-
-INSERT INTO asignacion_roles(id, fk_id_usuario, fk_id_rol)
-VALUES (NULL, '123456789', '1');
-
--- Registrar informacion laboral de nuevo usuario
-INSERT INTO detalle_docente (id_docente, fk_id_departamento, url_hoja_de_vida, salario. fk_id_tipo_contrato)
-VALUES ('987654321', '1', 'Www.unaurl.com', '5 000 000', '3');
-
--- Registrar informacion academica de nuevo usuario 
-INSERT INTO detalle_estudiante(id_estudiante, fk_id_estado_academico)
-VALUES ('123456789', '1');
-
-INSERT INTO (id_matricula_academica, fk_id_oferta_academica, fk_id_estudiante)
-VALUES (NULL, '1','123456789');
-
--- Ver información de docentes y estudiantes desde Rol administrativo (suponiendo id_rol: 2-Docente y 3-Estudiante)
-
-    --Por documento de identidad
-    SELECT usuario.id_usuario, usuario.nombres, usuario.apellidos 
-    FROM usuario
-    INNER JOIN asignacion_roles ON usuario.id_usuario = asignacion_roles.fk_id_usuario
-    WHERE asignacion_roles.fk_id_usuario = '2' AND usuario.id_usuario LIKE "123%"
-    ORDER BY usuario.id_usuario ASC;
-
-    --Por Apellidos
-    SELECT usuario.id_usuario, usuario.nombres, usuario.apellidos 
-    FROM usuario
-    INNER JOIN asignacion_roles ON usuario.id_usuario = asignacion_roles.fk_id_usuario
-    WHERE asignacion_roles.fk_id_usuario = '3' AND usuario.apellidos LIKE "Pe%"
-    ORDER BY usuario.apellidos ASC;
-
---Editar información laboral docentes desde Rol Administrativo (2 = Transitorio)
-UPDATE detalle_docente SET fk_id_tipo_contrato = '2' WHERE id_docente = '987654321';
-
--- Facultad
-INSERT INTO facultad (id_facultad, nombre_facultad, ubicacion, fk_id_institucion_educativa, fk_id_director_facultad)
-VALUES ('1', 'Facultad de ingenierías','Edificio 3', '1', '1');
-
--- Programa academico
-INSERT INTO programa_academico (id_programa_academico, fk_id_facultad, nombre, total_creditos, fk_id_director)
-VALUES ('1', '1','Ingenieria de Sistemas', 183, '1');
-
--- Periodo academico 
-INSERT INTO periodo_academico (id_periodo_academico, nombre, descripcion)
-VALUES ('1', 'Semestre 1','Blah blah blah');
-
--- anio periodo academico 
-INSERT INTO periodo_academico (id_anio_periodo_academico,anio, fk_id_periodo_academico, fk_id_institucion_educativa, fecha_matricula, fecha_inicio, fecha_final)
-VALUES ('1', '2023', '1', '1', '24-01-2023', '06-02-2023','16-06-2023', 'Blah blah blah');
-
--- Periodo academico 
-INSERT INTO periodo_academico (id_periodo_academico, nombre, descripcion)
-VALUES ('1', 'Semestre 1','Blah blah blah');
-
--- Crear asignatura (Los id de asignatura los puse así (y no como int) por que es mas facil de visualizar)
-    --Información de asignatura (intensidad horaria puede ser 4 horas semanales)
-    INSERT INTO asignatura (id_asignatura, fk_id_departamento, nombre, num_creditos, max_estudiantes)
-    VALUES ('IS873','1', 'Laboratorio de software','3', 36);
-
-    INSERT INTO pensum_programa_academico (id, fk_id_programa_academico, fk_id_asignatura)
-    VALUES (NULL,'1', 'IS873',);
-
-    INSERT INTO prerequisitos_asignatura (id, fk_id_asignatura, fk_id_asignatura_prerequisito)
-    VALUES (NULL,'IS873', 'IS714',);
-
-
-    --Información de grupo o de clase (Suponiendo que este es el curso 1)
-    INSERT INTO curso (id, fk_id_oferta_academica, fk_id_asignatura)
-    VALUES (NULL, '1', 'IS873');
-
-    INSERT INTO grupo (id, fk_id_curso, numero_grupo, id_docente_asignado)
-    VALUES ('1', '1', '987654321');
-
-    INSERT INTO clase (id_clase, hora_inicio, hora_final)
-    VALUES ('11', '2', '4');
-
-    INSERT INTO clase_dia (id_clase_dia, fk_id_dia_semana, fk_id_clase)
-    VALUES ('111', '2', '11');
-
-    INSERT INTO horario_clase (id, fk_id_grupo, fk_id_clase_dia, fk_id_ubicacion_clase)
-    VALUES (NULL, '1', '111', '1');
-
-    --Ubicación clase no está atado a una clase, simplemente estan los salones de clase
-    INSERT INTO clase_dia (id_ubicacion_clase, id_edificio, id_salon, nombre, descripcion)
-    VALUES ('1', '3', '201','Edificio 3', 'Salon maximo 30 estudiantes');
-
--- Ver asignatura desde rol administrativo (Cuando se busca, la informacion es resumida)
-  --Por Codigo (en el docente no inclute asignatura.programa_academico)
-    SELECT asignatura.id_asignatura, asignatura.nombre, programa_academico.nombre AS programa_academico
-    FROM asignatura 
-    INNER JOIN pensum_programa_academico ON asignatura.id_asignatura = pensum_programa_academico.fk_id_asignatura
-    INNER JOIN programa_academico ON pensum_programa_academico.fk_id_programa_academico = programa_academico.id_programa_academico
-    WHERE asignatura.id_asignatura LIKE "IS8%"
-    ORDER BY asignatura.id_asignatura ASC;
-
-  --Por Nombre
-    SELECT asignatura.id_asignatura, asignatura.nombre, programa_academico.nombre AS programa_academico
-    FROM asignatura 
-    INNER JOIN pensum_programa_academico ON asignatura.id_asignatura = pensum_programa_academico.fk_id_asignatura
-    INNER JOIN programa_academico ON pensum_programa_academico.fk_id_programa_academico = programa_academico.id_programa_academico
-    WHERE asignatura.nombre LIKE "Labora%"
-    ORDER BY asignatura.nombre ASC;
-
--- Ver información de asignatura en detalle
-SELECT asignatura.nombre, asignatura.num_creditos, asignatura.max_estudiantes, prerequisitos_asignatura.fk_id_asignatura_prerequisito,
-       clase.hora_inicio, clase.hora_final, dia_semana.nombre_dia_semana, usuario.nombres AS nombre_docente, usuario.apellidos AS apellidos_docente,
-       ubicacion_clase.id_edificio, ubicacion_clase.id_salon
-FROM asignatura 
-INNER JOIN curso ON asignatura.id_asignatura = curso.fk_id_asignatura
-INNER JOIN grupo ON curso.id = grupo.fk_id_curso
-INNER JOIN horario_clase ON grupo.id = horario_clase.fk_id_grupo
-INNER JOIN clase_dia ON horario_clase.fk_id_clase_dia = clase_dia.id_clase_dia
-INNER JOIN clase ON clase_dia.fk_id_clase=clase.id_clase 
-INNER JOIN dia_semana ON clase_dia.fk_id_dia_semana=dia_semana.id_dia_semana 
-INNER JOIN usuario ON grupo.fk_id_docente_asignado=usuario.id_usuario
-INNER JOIN prerequisitos_asignatura ON asignatura.id_asignatura = prerequisitos_asignatura.fk_id_asignatura_prerequisito
-INNER JOIN ubicacion_clase ON horario_clase.fk_id_ubicacion_clase = ubicacion_clase.id_ubicacion_clase
-WHERE asignatura.nombre = "Laboratorio de Software";
-
---Para obtener el nombre de la asignatura prerrequisito
-    SELECT asignatura.nombre
-    FROM asignatura 
-    INNER JOIN prerequisitos_asignatura ON asignatura.id_asignatura = prerequisitos_asignatura.fk_id_asignatura_prerequisito
-    WHERE prerequisitos_asignatura.fk_id_asignatura_prerequisito = "IS673"
-
--- Ver asignatura de mi programa academico (Se debe conocer el programa academico)
-SELECT asignatura.id_asignatura, asignatura.nombre, pensum_programa_academico.fk_id_programa_academico
-FROM asignatura 
-INNER JOIN pensum_programa_academico ON asignatura.id_asignatura = pensum_programa_academico.fk_id_asignatura
-WHERE pensum_programa_academico.fk_id_programa_academico = '1'
-
--- Ver mis asignaturas docente
-SELECT asignatura.id_asignatura, asignatura.nombre, asignatura.num_creditos, grupo.numero_grupo, grupo.id_docente_asignado
-FROM asignatura 
-INNER JOIN curso ON asignatura.id_asignatura = curso.fk_id_asignatura
-INNER JOIN grupo ON grupo.fk_id_curso = curso.id
-WHERE grupo.id_docente_asignado = "987654321";
-
--- Ver mis asignaturas estudiante
-SELECT asignatura.id_asignatura, asignatura.nombre, asignatura.num_creditos
-FROM historial_academico
-INNER JOIN grupo ON historial_academico.fk_id_grupo = grupo.id
-INNER JOIN curso ON grupo.fk_id_curso = curso.id
-INNER JOIN asignatura ON asignatura.id_asignatura = curso.fk_id_asignatura
-WHERE historial_academico.fk_id_estudiante = "123456789";
-
-
--- Ver información de MIS estudiantes (Vista docente)
-SELECT usuario.id_usuario, usuario.nombres, usuario.apellidos, usuario.correo_electronico, usuario.telefono
-FROM usuario
-INNER JOIN historial_academico ON usuario.id_usuario = fk_id_estudiante
-INNER JOIN grupo ON grupo.id = historial_academico.fk_id_grupo
-WHERE grupo.id_docente_asignado = "987654321";
-
-
--- Consulta para obtener el horario
-  -- NO ESTOY TAN SEGURA SI DEBE SER ID_EDIFICIO, ID_SALON O SIMPLEMENTE NOMBRE 
-    -- Horario docente
-      SELECT asignatura.id_asignatura, asignatura.nombre, grupo.numero_grupo AS grupo, 
-      clase.hora_inicio, clase.hora_final, dia_semana.nombre_dia_semana AS dia, ubicacion_clase.id_edificio,
-      ubicacion_clase.id_salon, usuario.nombres AS nombres_docente, usuario.apellidos AS apellidos_docente
-      FROM asignatura 
-      INNER JOIN curso ON asignatura.id_asignatura = curso.fk_id_asignatura
-      INNER JOIN grupo ON grupo.fk_id_curso = curso.id
-      INNER JOIN horario_clase ON horario_clase.fk_id_grupo = grupo.id
-      INNER JOIN clase_dia ON clase_dia.id_clase_dia = horario_clase.fk_id_clase_dia
-      INNER JOIN clase ON clase.id_clase = clase_dia.fk_id_clase
-      INNER JOIN ubicacion_clase ON ubicacion_clase.id_ubicacion_clase = horario_clase.fk_id_ubicacion_clase  
-      INNER join dia_semana ON dia_semana.id_dia_semana = clase_dia.fk_id_dia_semana
-      INNER JOIN usuario ON usuario.id_usuario = grupo.id_docente_asignado
-      WHERE grupo.id_docente_asignado = "12345";
-
-    -- Horario estudiante (Falta hacer mas pruebas)
-      SELECT asignatura.id_asignatura, asignatura.nombre, grupo.numero_grupo AS grupo, 
-      clase.hora_inicio, clase.hora_final, dia_semana.nombre_dia_semana AS dia, ubicacion_clase.id_edificio,
-      ubicacion_clase.id_salon, usuario.nombres AS nombres_docente, usuario.apellidos AS apellidos_docente
-      FROM asignatura 
-      INNER JOIN curso ON asignatura.id_asignatura = curso.fk_id_asignatura
-      INNER JOIN grupo ON grupo.fk_id_curso = curso.id
-      INNER JOIN historial_academico ON historial_academico.fk_id_grupo = grupo.id
-      INNER JOIN horario_clase ON horario_clase.fk_id_grupo = grupo.id
-      INNER JOIN clase_dia ON clase_dia.id_clase_dia = horario_clase.fk_id_clase_dia
-      INNER JOIN clase ON clase.id_clase = clase_dia.fk_id_clase
-      INNER JOIN ubicacion_clase ON ubicacion_clase.id_ubicacion_clase = horario_clase.fk_id_ubicacion_clase  
-      INNER join dia_semana ON dia_semana.id_dia_semana = clase_dia.fk_id_dia_semana
-      INNER JOIN usuario ON usuario.id_usuario = grupo.id_docente_asignado
-      WHERE historial_academico.fk_id_estudiante = "123456789";
-
--- Crear curso de extension (se usa la tabla de asignaturas)
-    -- Lo unico que cambia es que en num_creditos guardará costo, no tendria prerrequisitos
-
-
--- Ver curso de extension desde rol administrativo (Cuando se busca, la informacion es resumida)
-  --Por Codigo (en el docente no inclute asignatura.programa_academico)
-    SELECT asignatura.id_asignatura, asignatura.nombre, asignatura.num_creditos
-    FROM asignatura 
-    WHERE asignatura.id_asignatura LIKE "IS8%"
-    ORDER BY id_asignatura ASC;
-
-  --Por Nombre
-    SELECT asignatura.id_asignatura, asignatura.nombre, asignatura.num_creditos
-    FROM asignatura 
-    WHERE asignatura.nombre LIKE "Labora%"
-    ORDER BY nombre ASC;
-
--- Gestionar notas desde rol docente 
-SELECT asignatura.id_asignatura, asignatura.nombre, grupo.numero_grupo, grupo.id_docente_asignado
-FROM asignatura 
-INNER JOIN curso ON asignatura.id_asignatura = curso.fk_id_asignatura
-INNER JOIN grupo ON grupo.fk_id_curso = curso.id
-WHERE grupo.id_docente_asignado = "987654321";
-
--------------------------------------------------------- REVISADAS PERO NO PROBADAS --------------------------------------------------------
-
--- 1. creditos matriculados por un estudiante en un periodo académico
-SELECT SUM(a.num_creditos) AS total_creditos_matriculados
-FROM nota_estudiante_asignatura_matriculada AS n
-INNER JOIN matricula_academica AS m ON n.fk_id_matricula_academica = m.id_matricula_academica
-INNER JOIN oferta_academica AS o ON m.fk_id_oferta_academica = o.id_oferta_academica
-INNER JOIN asignatura AS a ON n.fk_id_asignatura = a.id_asignatura
-WHERE m.fk_id_estudiante = <id_estudiante>
-  AND o.fk_id_programa_academico = <id_programa_academico>
-  AND o.id_anio_periodo_academico = (
-    SELECT id_anio_periodo_academico
-    FROM anio_periodo_academico
-    WHERE anio = <anio> AND id_periodo_tiempo = <id_periodo_tiempo>
-  );
-
--- 2. ubicación semestral de un estudiante
-SELECT ROUND(c.total_creditos_aprobados / p.total_creditos, 2) AS ratio_creditos
-FROM creditos_aprobados_estudiante_programa_academico AS c
-INNER JOIN programa_academico AS p ON c.id_programa_academico = p.id_programa_academico
-WHERE c.id_estudiante = <id_estudiante> AND c.id_programa_academico = <id_programa_academico>;
-
--- 3. último periodo académico que matriculó un estudiante
-SELECT ap.anio, pt.id_periodo_tiempo AS periodo
-FROM matricula_academica AS ma
-INNER JOIN oferta_academica AS oa ON ma.fk_id_oferta_academica = oa.id_oferta_academica
-INNER JOIN anio_periodo_academico AS ap ON oa.fk_id_anio_periodo_academico = ap.id_anio_periodo_academico
-INNER JOIN periodo_tiempo AS pt ON ap.id_periodo_tiempo = pt.id_periodo_tiempo
-WHERE ma.fk_id_estudiante = <id_estudiante>
-ORDER BY ap.anio DESC, pt.id_periodo_tiempo DESC
-LIMIT 1;
-
--- 4. total de estudiantes matriculados en un periodo académico
-SELECT COUNT(DISTINCT m.fk_id_estudiante) AS total_estudiantes
-FROM matricula_academica AS m
-INNER JOIN oferta_academica AS oa ON m.fk_id_oferta_academica = oa.id_oferta_academica
-WHERE oa.fk_id_anio_periodo_academico = (
-    SELECT id_anio_periodo_academico
-    FROM anio_periodo_academico
-    WHERE anio = <anio> AND id_periodo_tiempo = <id_periodo_tiempo>
-  )
-
--- 5. total de estudiantes matriculados en un programa académico
-SELECT COUNT(DISTINCT m.fk_id_estudiante) AS total_estudiantes
-FROM matricula_academica AS m
-INNER JOIN oferta_academica AS oa ON m.fk_id_oferta_academica = oa.id_oferta_academica
-INNER JOIN anio_periodo_academico AS ap ON oa.fk_id_anio_periodo_academico = ap.id_anio_periodo_academico
-WHERE ap.anio = <anio> AND ap.id_periodo_tiempo = <id_periodo_tiempo> AND oa.fk_id_programa_academico = <id_programa_academico>; 
-
--------------------------------------------------------- REVISADAS Y PROBADAS --------------------------------------------------------
-
-
-
--------------------------------------------------------- PENDIENTES --------------------------------------------------------
+----------------------------------------------------- PENDIENTES -----------------------------------------------------
+--TODO:
+--0. Eliminar tabla curso y pasar sus datos a la tabla grupo, CONSIDERA la posibilidad de eliminar la tabla matricula_academica en favor de historial_academico pero NO LO CREO
+--0.1. eliminar la tala nota_estudiante_asignatura_matriculada em favor de asignaturas_aprobadas_estudiante_programa_academico, ahora la nota definitiva estará asociada a un estudiante, programa académico y asignatura y la nota de un grupo se calculará en ejecución con la tabla historial_academico
+--0.2. validar que un estudiante no pueda matricular una asignatura que ya aprobó en la tabla asignaturas_aprobadas_estudiante_programa_academico
+--//! cuando inserte muchos registros simultáneamente, como cuando calcule las notas de los estudiantes, no se podrán insertar datos duplicados en la tabla asignaturas_aprobadas_estudiante_programa_academico, por lo tanto la consulta fallará. Necesito que continúe ejecutándose y al final me notifique los registros que fallaron al insertarse
 --1. Módulo de notas detallado y personalizable en cuanto a porcentajes
 --2. Consulta que retorne el promedio de un estudiante en un programa academico en un periodo académico
 --3. Consulta que retorne el promedio global de un estudiante en un programa academico
 --4. Habilitaciones 
 --5. Cancelaciones 
+--6. Validar que el jefe de departamento y facultad solo dirija una cosa a la vez 
+--7. Validar que el rector no pueda dirigir facultades ni departamentos 
+--8. trigger para llenar los horarios de la tabla clase
+--9. Historial académico completo del estudiante
+--10. Añadir el anio_periodo_academico en la tabla docente_asignatura
+--11. Estandarizar la nomenclatura de los id en varias tablas, como curso y grupo, que solo dice "id", cambiar por id_grupo e id_curso
+
+
+----------------------------------------------------- CONSULTAS -----------------------------------------------------
+
+/*//! Landing page
+//*Lista de programas académicos, malla curricular de cada programa, asignaturas, cursos de extensión y detalles de cada uno, lista de profesores con sus fotos de perfil:
+//* 1. Lista de programas académicos() => TODO de tabla programa_academico
+//?Lista en el backend
+SELECT * FROM programa_academico;
+
+//* 2. Malla curricular de cada programa(id_programa_academico) => todos los id_asignatura de tabla pensum_programa_academico
+//?Lista en el backend
+SELECT asignatura.*
+FROM pensum_programa_academico ppa
+INNER JOIN programa_academico ON ppa.fk_id_programa_academico = programa_academico.id_programa_academico
+INNER JOIN asignatura ON ppa.fk_id_asignatura = asignatura.id_asignatura
+WHERE ppa.fk_id_programa_academico = <id_programa_academico>
+
+//* 3. Asignaturas cursos de extensión + detalle() => TODO de tabla asignatura where asigatura.curso_extension == true
+//!Funciona, revisar en el backend la forma en la que retorna los datos el UNION ALL y ver si combiene discriminar las asignaturas y los cursos de extensión así o hacer un filter en el backend
+SELECT *
+FROM asignatura
+WHERE curso_extension = false
+UNION ALL
+SELECT *
+FROM asignatura
+WHERE curso_extension = true
+
+//* 4. Obtener datos de un usuario según su rol
+SELECT id_usuario, sexo, nombres, apellidos, correo_electronico, telefono, url_foto, e.*, d.id_docente, d.fk_id_departamento, d.fk_id_tipo_contrato
+FROM usuario u
+LEFT JOIN detalle_estudiante e ON u.id_usuario = e.id_estudiante
+LEFT JOIN detalle_docente d ON u.id_usuario = d.id_docente
+LEFT JOIN detalle_administrativo a ON u.id_usuario = a.id_administrativo
+WHERE u.id_usuario = ?;
+
+//* 5. Lista de profesores con su nombre, apellido, departamento y foto de perfil(lista )
+SELECT usuario.id_usuario, usuario.nombres, usuario.apellidos, usuario.url_foto, detalle_docente.fk_id_departamento
+FROM usuario
+INNER JOIN detalle_docente ON usuario.id_usuario = detalle_docente.id_docente
+WHERE usuario.id_usuario = detalle_docente.id_docente
+
+//! LOGIN
+//*Con el número de cédula y el rol (dado por el endpoint desde donde intenta acceder), consultar si el usuario existe, y si tiene ese rol asignado en la tabla asignacion_roles. Si es así, retornar el hash, la salt y validar la contraseña en el back.
+//* 1. Login(id_usuario, id_rol)
+//! comprobar en el backend si el usuario existe, si tiene ese rol asignado en la tabla asignacion_roles
+SELECT usuario.id_usuario, usuario.contrasena_salt, usuario.contrasena_hash, asignacion_roles.fk_id_rol
+FROM usuario
+INNER JOIN asignacion_roles ON usuario.id_usuario = asignacion_roles.fk_id_usuario
+WHERE asignacion_roles.fk_id_usuario = 111
+AND asignacion_roles.fk_id_rol = 2
+
+//! PORTAL ADMINISTRATIVO
+//*CREATE y UPDATE tablas: (id) => CREATE o UPDATE en tabla: usuario, asignatura, prerequisitos_asignatura, curso, grupo, horario_clase, docente_asignatura, matricula_academica
+//? 1. INSERTS
+//* 1.1. Crea usuario
+INSERT INTO usuario (id_usuario, sexo, nombres, apellidos, correo_electronico, telefono, contrasena_salt, contrasena_hash)
+VALUES (1, 1, 'John', 'Doe', 'johndoe@example.com', '123456789', 'salt123', 'hash123')
+(1115090873,1,'Jose','Salazar','neabyop@gmail.com','123456789', 'salt123', 'hash123'),
+(2,2,'Juan Sebastian' , 'Florez' , 'sebastianflorez3@gmail.com','123456789', 'salt123', 'hash123');
+//* 1.2. Crea dirección
+INSERT INTO direccion (id_direccion, direccion, barrio, ciudad, departamento)
+VALUES (1, 'Calle Principal 123', 'Centro', 'Ciudad Principal', 'Departamento Principal'),
+//* 1.3. Asigna roles al usuario
+INSERT INTO asignacion_roles (fk_id_usuario, fk_id_rol)
+VALUES (1, 1),
+VALUES (1, 1),
+VALUES (1, 1);
+
+//*1.4. Crear detalle_estudiante
+INSERT INTO detalle_estudiante (id_estudiante, fk_id_estado_academico)
+VALUES (2, 1);  
+
+//*1.5. Crear detalle_docente
+INSERT INTO detalle_docente (id_docente, fk_id_departamento, url_hoja_de_vida, salario, fk_id_tipo_contrato)
+VALUES (3, 2, '<url_hoja_de_vida>', 10000, 1);
+
+//*1.6. Crear detalle_administrativo
+INSERT INTO detalle_administrativo (id_administrativo)
+VALUES
+  (1);
+
+//*1.7. Asignar cargos administrativos
+INSERT INTO detalle_administrativo_cargo_administrativo (fk_id_administrativo, fk_id_cargo_administrativo)
+VALUES
+  (1, 1);
+
+//? 2. UPDATES
+//*2.1. Actualizar tabla usuario
+UPDATE usuario
+SET sexo = 1,
+    nombres = 'Juan Sebastian',
+    apellidos = 'Florez',
+    correo_electronico = 'sebastianflorez3@gmail.com',
+    telefono = '123456789',
+    url_foto = 'asdasdasd',
+    contrasena_salt = 'salt123',
+    contrasena_hash = 'hash123'
+WHERE id_usuario = 2;
+
+//*2.1. Actualizar tabla detalle_estudiante
+UPDATE detalle_estudiante
+SET fk_id_estado_academico = 1  
+WHERE id_estudiante = 2;  
+
+//*2.2. Actualizar tabla detalle_docente
+UPDATE detalle_docente
+SET fk_id_departamento = 2,
+    url_hoja_de_vida = '<url_hoja_de_vida>',
+    salario = 10000,
+    fk_id_tipo_contrato = 1
+WHERE id_docente = 3;
+
+//*2.3. Eliminación de roles de usuarios en la tabla asignacion_roles(id_usuario, id_rol)
+DELETE FROM asignacion_roles
+WHERE fk_id_usuario = [1] AND fk_id_rol = [2];
+
+//* 3. Cambiar contraseña usuario (id_usuario, nueva_contrasena_salt, nueva_contrasena_hash)
+UPDATE usuario
+SET contrasena_salt = 'nueva_contrasena_salt',
+    contrasena_hash = 'nueva_contrasena_hash'
+WHERE id_usuario = 1;
+
+//* 4. Total de estudiantes matriculados en un periodo académico en TODA la institución educativa(anio, id_periodo_academico)
+SELECT COUNT(DISTINCT m.fk_id_estudiante) AS total_estudiantes
+FROM matricula_academica AS m
+INNER JOIN oferta_academica AS oa ON m.fk_id_oferta_academica = oa.id_oferta_academica
+INNER JOIN anio_periodo_academico AS ap ON oa.fk_id_anio_periodo_academico = ap.id_anio_periodo_academico
+WHERE oa.fk_id_anio_periodo_academico = (
+SELECT id_anio_periodo_academico
+FROM anio_periodo_academico
+WHERE anio = [1] AND fk_id_periodo_academico = [2]
+);
+
+//* 5. Total de estudiantes matriculados en un periodo académico en un programa académico(anio, id_periodo_academico, id_programa_academico)
+
+SELECT COUNT(DISTINCT m.fk_id_estudiante) AS total_estudiantes
+FROM matricula_academica AS m
+INNER JOIN oferta_academica AS oa ON m.fk_id_oferta_academica = oa.id_oferta_academica
+INNER JOIN anio_periodo_academico AS ap ON oa.fk_id_anio_periodo_academico = ap.id_anio_periodo_academico
+WHERE oa.fk_id_anio_periodo_academico = (
+SELECT id_anio_periodo_academico
+FROM anio_periodo_academico
+WHERE anio = 2023 AND fk_id_periodo_academico = 1 AND oa.fk_id_programa_academico = 1
+);
+
+//! PORTAL DOCENTE
+//*Ver lista de grupos con la asignatura de cada grupo (docente_asignatura), ver los horarios de todos los cursos, ver los estudiantes, el grupo al que pertenecen y sus notas, agregar y editar notas (historial_academico), información de perfil (usuario y detalle), cambiar contraseña
+
+//* 1. Obtener información de un docente
+SELECT usuario.*, detalle_docente.*
+FROM usuario, detalle_docente
+WHERE usuario.id_usuario = 111 AND detalle_docente.id_docente = 111
+
+//* 2. Ver las asignaturas que enseña un docente(id_docente)
+SELECT asignatura.*
+FROM docente_asignatura
+INNER JOIN asignatura ON docente_asignatura.fk_id_asignatura = asignatura.id_asignatura
+WHERE docente_asignatura.fk_id_docente = 111;
+
+//* 3. Ver horario de un docente(id_docente, anio, id_periodo_academico)
+SELECT
+  grupo.id,
+  grupo.numero_grupo,
+  asignatura.nombre,
+  dia_semana.nombre_dia_semana,
+  clase.hora_inicio,
+  clase.hora_final,
+  ubicacion_clase.id_edificio,
+  ubicacion_clase.id_salon
+FROM horario_clase
+INNER JOIN grupo ON horario_clase.fk_id_grupo = grupo.id
+INNER JOIN curso ON grupo.fk_id_curso = curso.id
+INNER JOIN asignatura ON curso.fk_id_asignatura = asignatura.id_asignatura
+INNER JOIN clase_dia ON horario_clase.fk_id_clase_dia = clase_dia.id_clase_dia
+INNER JOIN dia_semana ON clase_dia.fk_id_dia_semana = dia_semana.id_dia_semana
+INNER JOIN clase ON clase_dia.fk_id_clase = clase.id_clase
+INNER JOIN ubicacion_clase ON horario_clase.fk_id_ubicacion_clase = ubicacion_clase.id_ubicacion_clase
+WHERE grupo.id IN (
+//* 3.2. Lista de grupos en los que enseña un docente en un periodo académico(id_docente, anio, id_periodo_academico)
+  SELECT grupo.id
+  FROM grupo
+  INNER JOIN curso ON grupo.fk_id_curso = curso.id
+  INNER JOIN oferta_academica ON curso.fk_id_oferta_academica = oferta_academica.id_oferta_academica
+  INNER JOIN anio_periodo_academico ON oferta_academica.fk_id_anio_periodo_academico = anio_periodo_academico.id_anio_periodo_academico
+  WHERE grupo.fk_id_docente_asignado = <id_docente> 
+  AND anio_periodo_academico.anio = <anio> 
+  AND anio_periodo_academico.fk_id_periodo_academico= <id_periodo_academico>
+  );
+
+//* 4. Cambiar contraseña usuario (id_usuario, nueva_contrasena_salt, nueva_contrasena_hash)
+UPDATE usuario
+SET contrasena_salt = 'nueva_contrasena_salt',
+    contrasena_hash = 'nueva_contrasena_hash'
+WHERE id_usuario = 1;
+
+//* 5. Modificar notas(id_estudiante, id_grupo, nota1, nota2, nota3, nota4) => UPDATE en tabla historial_academico * notas
+UPDATE historial_academico
+SET nota_1 = 1.4,
+    nota_2 = 2.4,
+    nota_3 = 3.4,
+    nota_4 = 4.4
+WHERE fk_id_grupo = 1 AND fk_id_estudiante = 123;
+
+//! PORTAL ESTUDIANTIL
+//*Ver los cursos en los que está matriculado y su horario, ver lista de asignaturas matriculadas (ambas cosas se miran en la tabla grupo). ver los programas académicos en los que está registrado, --- la malla curriculado --- y las ---asignaturas aprobadas, matriculadas y no aprobadas --- (nota_estudiante_asignatura_matriculada), ver notas parciales (historial_academico) y notas finales (nota_estudiante_asignatura_matriculada), información de perfil (usuario y detalle), cambiar contraseña
+//* 1. SELECT id_anio_periodo_academico() (lo saca de la tabla institucion_educativa)
+SELECT id_anio_periodo_academico
+FROM anio_periodo_academico
+JOIN institucion_educativa ON anio_periodo_academico.anio = institucion_educativa.anio_vigente
+AND anio_periodo_academico.fk_id_periodo_academico = institucion_educativa.periodo_academico_vigente;
+
+//* 2. Lista de ofertas académicas de un estudiante(id_estudiante, anio, id_periodo_academico)
+SELECT
+  ma.fk_id_oferta_academica,
+  pa.id_programa_academico,
+  pa.nombre,
+  pa.total_creditos
+FROM
+  matricula_academica ma
+JOIN
+  oferta_academica oa ON ma.fk_id_oferta_academica = oa.id_oferta_academica
+JOIN
+  programa_academico pa ON oa.fk_id_programa_academico = pa.id_programa_academico
+WHERE
+  ma.fk_id_estudiante = 123
+  AND oa.fk_id_anio_periodo_academico = (
+    SELECT id_anio_periodo_academico
+    FROM anio_periodo_academico
+    WHERE anio = 2023 AND fk_id_periodo_academico = 1
+  );
+
+//* 3. Historial del estudiante en todos sus grupos de una anio y id_periodo_academico(id_estudiante, anio, id_periodo_academico)
+SELECT
+  historial_academico.fk_id_grupo,
+  grupo.numero_grupo,
+  curso.fk_id_asignatura,
+  asignatura.nombre AS nombre_asignatura,
+  historial_academico.nota_1,
+  historial_academico.nota_2,
+  historial_academico.nota_3,
+  historial_academico.nota_4
+FROM
+  historial_academico
+JOIN grupo ON historial_academico.fk_id_grupo = grupo.id
+JOIN curso ON grupo.fk_id_curso = curso.id
+JOIN asignatura ON curso.fk_id_asignatura = asignatura.id_asignatura
+JOIN oferta_academica ON curso.fk_id_oferta_academica = oferta_academica.id_oferta_academica
+WHERE historial_academico.fk_id_estudiante = 123 
+AND oferta_academica.fk_id_anio_periodo_academico IN (
+SELECT id_anio_periodo_academico
+    FROM anio_periodo_academico
+    WHERE anio = 2023 AND fk_id_periodo_academico = 1
+);
+
+//* 3. Historial del estudiante en TODA su historia(id_estudiante)
+//! Es mejor dejarlo para post entrega :v
+SELECT
+  historial_academico.fk_id_grupo,
+  grupo.numero_grupo,
+  curso.fk_id_asignatura,
+  asignatura.nombre AS nombre_asignatura,
+  historial_academico.nota_1,
+  historial_academico.nota_2,
+  historial_academico.nota_3,
+  historial_academico.nota_4
+FROM
+  historial_academico
+JOIN grupo ON historial_academico.fk_id_grupo = grupo.id
+JOIN curso ON grupo.fk_id_curso = curso.id
+JOIN asignatura ON curso.fk_id_asignatura = asignatura.id_asignatura
+JOIN oferta_academica ON curso.fk_id_oferta_academica = oferta_academica.id_oferta_academica
+WHERE historial_academico.fk_id_estudiante = 123;
+
+//* 5. Obtener la matrícula académica de un estudiante(id_estudiante, id_oferta_academica)
+SELECT id_matricula_academica
+FROM matricula_academica
+WHERE fk_id_estudiante = 123 AND fk_id_oferta_academica = 1;
+
+//* 6. Historial de notas del semestre(id_estudiante, id_oferta_academica)
+SELECT a.id_asignatura, a.nombre, n.nota_final_estudiante_asignatura
+FROM nota_estudiante_asignatura_matriculada n
+JOIN asignatura a ON n.fk_id_asignatura = a.id_asignatura
+JOIN matricula_academica ma ON n.fk_id_matricula_academica = ma.id_matricula_academica
+WHERE ma.fk_id_estudiante = 123 AND ma.fk_id_oferta_academica = 1;
+
+//* 7. Obtener información de un estudiante
+SELECT usuario.*, detalle_estudiante.*
+FROM usuario, detalle_estudiante
+WHERE usuario.id_usuario = 123 AND detalle_estudiante.id_estudiante = 123
+
+//* 8. Cambiar contraseña usuario (id_usuario, nueva_contrasena_salt, nueva_contrasena_hash)
+UPDATE usuario
+SET contrasena_salt = 'nueva_contrasena_salt',
+    contrasena_hash = 'nueva_contrasena_hash'
+WHERE id_usuario = 1;
+
+//* 9. Créditos matriculados por un estudiante en un periodo académico y en un programa académico(d_estudiante, id_programa_academico, anio, id_periodo_tiempo)
+SELECT SUM(a.num_creditos) AS total_creditos_matriculados
+FROM nota_estudiante_asignatura_matriculada AS n
+INNER JOIN matricula_academica AS m ON n.fk_id_matricula_academica = m.id_matricula_academica
+INNER JOIN oferta_academica AS o ON m.fk_id_oferta_academica = o.id_oferta_academica
+INNER JOIN asignatura AS a ON n.fk_id_asignatura = a.id_asignatura
+WHERE m.fk_id_estudiante = 123
+  AND o.fk_id_programa_academico = 1
+  AND o.fk_id_anio_periodo_academico = (
+    SELECT id_anio_periodo_academico
+    FROM anio_periodo_academico
+    WHERE anio = 2023 AND fk_id_periodo_academico = 1
+  );
+
+//* 10. Ubicación semestral de un estudiante en un programa académico(id_estudiante, id_oferta_academica)
+SELECT subquery.creditos_aprobados, subquery.creditos_totales, ROUND(subquery.creditos_aprobados/subquery.creditos_totales * 100, 2) AS ratio_aprobado
+FROM (
+  SELECT SUM(asignatura.num_creditos) AS creditos_aprobados, pa.total_creditos AS creditos_totales
+  FROM asignaturas_aprobadas_estudiante_programa_academico AS aaepa
+  INNER JOIN asignatura ON aaepa.fk_id_asignatura = asignatura.id_asignatura
+  INNER JOIN oferta_academica oa ON aaepa.fk_id_oferta_academica = oa.id_oferta_academica
+  INNER JOIN programa_academico pa ON oa.fk_id_programa_academico = pa.id_programa_academico
+  WHERE aaepa.fk_id_estudiante = 123 
+  AND aaepa.fk_id_oferta_academica = 1
+) subquery;
+
+//* 11. Último periodo académico que matriculó un estudiante(id_estudiante)
+SELECT ap.anio, ap.fk_id_periodo_academico AS periodo_academico
+FROM matricula_academica AS ma
+INNER JOIN oferta_academica AS oa ON ma.fk_id_oferta_academica = oa.id_oferta_academica
+INNER JOIN anio_periodo_academico AS ap ON oa.fk_id_anio_periodo_academico = ap.id_anio_periodo_academico
+WHERE ma.fk_id_estudiante = 123
+ORDER BY ap.anio DESC, ap.fk_id_periodo_academico DESC
+LIMIT 1;
+
+//* 12. Registro nota final estudiante en un grupo(id_estudiante, id_grupo)
+TODO: Esta función se va a eliminar en favor de la 13+1
+INSERT INTO nota_estudiante_asignatura_matriculada (fk_id_matricula_academica, fk_id_asignatura, nota_final_estudiante_asignatura)
+SELECT ma.id_matricula_academica, curso.fk_id_asignatura, ((ha.nota_1 + ha.nota_2 + ha.nota_3 + ha.nota_4) / 4) AS promedio
+FROM historial_academico ha
+INNER JOIN grupo ON ha.fk_id_grupo = grupo.id
+INNER JOIN curso ON grupo.fk_id_curso = curso.id
+INNER JOIN matricula_academica ma ON ha.fk_id_estudiante = ma.fk_id_estudiante
+WHERE ha.id in (
+  SELECT id
+  FROM historial_academico
+  WHERE ha.fk_id_estudiante = 123
+  AND ha.fk_id_grupo = 1
+)
+ON DUPLICATE KEY UPDATE nota_final_estudiante_asignatura = (ha.nota_1 + ha.nota_2 + ha.nota_3 + ha.nota_4) / 4;
+
+//* 13. Registrar como aprobada una asignatura por un estudiante si su nota en el grupo es >= 3(id_estudiante, id_grupo)
+INSERT INTO asignaturas_aprobadas_estudiante_programa_academico (fk_id_estudiante, fk_id_oferta_academica, fk_id_asignatura, nota_final_estudiante_asignatura)
+SELECT id_estudiante, id_oferta_academica, id_asignatura, nota_asignatura
+FROM (
+  SELECT ha.fk_id_estudiante AS id_estudiante, oa.id_oferta_academica AS id_oferta_academica, curso.fk_id_asignatura AS id_asignatura, ROUND((ha.nota_1 + ha.nota_2 + ha.nota_3 + ha.nota_4) / 4, 1) AS nota_asignatura
+  FROM historial_academico ha
+  INNER JOIN grupo ON ha.fk_id_grupo = grupo.id
+  INNER JOIN curso ON grupo.fk_id_curso = curso.id
+  INNER JOIN oferta_academica oa ON curso.fk_id_oferta_academica = oa.id_oferta_academica
+  WHERE ha.fk_id_estudiante = 123
+    AND ha.fk_id_grupo = 1
+) AS subquery
+HAVING nota_asignatura >= 3;
+
+//* 14. Promedio de un estudiante en una oferta academica(id_estudiante, id_oferta_academica)
+//! Hay que probarlo con más datos cuando los estudiantes tengan más notas
+SELECT AVG(ROUND((ha.nota_1 + ha.nota_2 + ha.nota_3 + ha.nota_4) / 4, 1)) AS promedio_semestral
+  FROM historial_academico ha
+  INNER JOIN grupo ON ha.fk_id_grupo = grupo.id
+  INNER JOIN curso ON grupo.fk_id_curso = curso.id
+  INNER JOIN oferta_academica oa ON curso.fk_id_oferta_academica = oa.id_oferta_academica
+  WHERE ha.fk_id_estudiante = 123
+  AND curso.fk_id_oferta_academica = 1;
+*/
+
+
+/*//! Landing page
+//* 1. Lista de programas académicos() => TODO de tabla programa_academico
+//?Lista en el backend
+//* 2. Malla curricular de cada programa(id_programa_academico) => todos los id_asignatura de tabla pensum_programa_academico
+//* 3. Asignaturas cursos de extensión + detalle() => TODO de tabla asignatura where asigatura.curso_extension == true
+//* 4. Obtener datos de un usuario según su rol
+//* 5. Lista de profesores con su nombre, apellido, departamento y foto de perfil(lista )
+//! LOGIN
+//* 1. Login(id_usuario, id_rol)
+//*CREATE y UPDATE tablas: (id) => CREATE o UPDATE en tabla: usuario, asignatura, prerequisitos_asignatura, curso, grupo, horario_clase, docente_asignatura, matricula_academica
+//* 1.1. Crea usuario
+//* 1.2. Crea dirección
+//* 1.3. Asigna roles al usuario
+/
+/*1.4. Crear detalle_estudiante
+//*1.5. Crear detalle_docente
+//*1.6. Crear detalle_administrativo
+//*1.7. Asignar cargos administrativos
+//? 2. UPDATES
+//*2.1. Actualizar tabla usuario
+//*2.1. Actualizar tabla detalle_estudiante
+//*2.2. Actualizar tabla detalle_docente
+//*2.3. Eliminación de roles de usuarios en la tabla asignacion_roles(id_usuario, id_rol)
+//* 3. Cambiar contraseña usuario (id_usuario, nueva_contrasena_salt, nueva_contrasena_hash)
+//* 4. Total de estudiantes matriculados en un periodo académico en TODA la institución educativa(anio, id_periodo_academico)
+//* 5. Total de estudiantes matriculados en un periodo académico en un programa académico(anio, id_periodo_academico, id_programa_academico)
+//! PORTAL DOCENTE
+//* 1. Obtener información de un docente
+//* 2. Ver las asignaturas que enseña un docente(id_docente)
+//* 3. Ver horario de un docente(id_docente, anio, id_periodo_academic
+//* 3.2. Lista de grupos en los que enseña un docente en un periodo académico(id_docente, anio, id_periodo_academico)
+//* 4. Cambiar contraseña usuario (id_usuario, nueva_contrasena_salt, nueva_contrasena_hash)
+//* 5. Modificar notas(id_estudiante, id_grupo, nota1, nota2, nota3, nota4) => UPDATE en tabla historial_academico * notas
+//! PORTAL ESTUDIANTIL
+//* 1. SELECT id_anio_periodo_academico() (lo saca de la tabla institucion_educativa)
+//* 2. Lista de ofertas académicas de un estudiante(id_estudiante, anio, id_periodo_academico)
+//* 3. Historial del estudiante en todos sus grupos de una anio y id_periodo_academico(id_estudiante, anio, id_periodo_academico)
+//* 3. Historial del estudiante en TODA su historia(id_estudiante)
+//* 5. Obtener la matrícula académica de un estudiante(id_estudiante, id_oferta_academica)
+//* 6. Historial de notas del semestre(id_estudiante, id_oferta_academica)
+//* 7. Obtener información de un estudiante
+//* 8. Cambiar contraseña usuario (id_usuario, nueva_contrasena_salt, nueva_contrasena_hash)
+//* 9. Créditos matriculados por un estudiante en un periodo académico y en un programa académico(d_estudiante, id_programa_academico, anio, id_periodo_tiempo)
+//* 10. Ubicación semestral de un estudiante en un programa académico(id_estudiante, id_oferta_academica)
+//* 11. Último periodo académico que matriculó un estudiante(id_estudiante)
+//* 12. Registro nota final estudiante en un grupo(id_estudiante, id_grupo)
+//* 13. Registrar como aprobada una asignatura por un estudiante si su nota en el grupo es >= 3(id_estudiante, id_grupo)
+//* 14. Promedio de un estudiante en una oferta academica(id_estudiante, id_oferta_academica)
