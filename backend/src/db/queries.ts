@@ -236,7 +236,7 @@ export const consultas: Iconsultas = {
   },
 
   15: {
-    metodo: metodos.post,
+    metodo: metodos.get,
     parametros: ['idEstudiante', 'idOfertaAcademica'],
     consulta: `SELECT subquery.creditos_aprobados, subquery.creditos_totales, ROUND(subquery.creditos_aprobados/  subquery.creditos_totales * 100, 2) AS ratio_aprobado
       FROM (
@@ -266,7 +266,7 @@ export const consultas: Iconsultas = {
 
   //TODO: Esta función se va a eliminar en favor de la 12+1
   17: {
-    metodo: metodos.post,
+    metodo: metodos.get,
     parametros: ['idEstudiante', 'idGrupo'],
     consulta: `INSERT INTO nota_estudiante_asignatura_matriculada (fk_id_matricula_academica, fk_id_asignatura, nota_final_estudiante_asignatura)
       SELECT ma.id_matricula_academica, curso.fk_id_asignatura, ((ha.nota_1 + ha.nota_2 + ha.nota_3 + ha.nota_4) / 4) AS promedio

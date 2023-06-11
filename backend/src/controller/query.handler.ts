@@ -35,8 +35,7 @@ const validarContrasenaUsuario = async ({
 
   const respuestaBDValidada = validarRespuestaBD({
     respuestaBD,
-    consultaDeLectura: parametrosValidados.consultaDeLectura,
-    nConsulta: parametrosValidados.nConsulta
+    consultaDeLectura: parametrosValidados.consultaDeLectura
   })
 
   const resultadosConsulta = respuestaBDValidada.respuestaRevisadaBD
@@ -100,8 +99,7 @@ const manejadorDeConsultas = async (
 
     const respuestaBDValidada = validarRespuestaBD({
       respuestaBD,
-      consultaDeLectura: parametrosValidados.consultaDeLectura,
-      nConsulta: parametrosValidados.nConsulta
+      consultaDeLectura: parametrosValidados.consultaDeLectura
     })
 
     enviarRespuesta({

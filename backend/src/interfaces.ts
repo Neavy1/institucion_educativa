@@ -15,6 +15,12 @@ export interface IrespuestaBackend {
   datosConsultaEspecial?: any
   error?: any
 }
+export interface IerrorSQLFiltrado {
+  codigoError: number
+  EstadoSQL: string
+  codigoInterno: string
+  detalleError?: string
+}
 export interface Imysql2Error {
   message: string
   code: string
@@ -68,7 +74,6 @@ export interface IrespuestaBD {
 export interface IvalidarRespuestaBD {
   respuestaBD: IrespuestaBD
   consultaDeLectura: boolean
-  nConsulta: number
 }
 export interface IrespuestaBDValidada {
   respuestaRevisadaBD: IrespuestaBD

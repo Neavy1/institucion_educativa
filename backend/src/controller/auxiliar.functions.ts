@@ -7,6 +7,7 @@ import type {
   IParametrosenviarRespuesta,
   IcompararContrasena,
   IencriptarContrasena,
+  IerrorSQLFiltrado,
   IrespuestaBDValidada,
   IrespuestaBackend,
   IvalidacionParametros,
@@ -18,16 +19,14 @@ import { errores, mensajesUsuario } from '../utils/dictionaries'
 
 const validarRespuestaBD = ({
   respuestaBD,
-  consultaDeLectura,
-  nConsulta
+  consultaDeLectura
 }: IvalidarRespuestaBD): IrespuestaBDValidada => {
-  let descripcion = ''
   let mensaje = ''
 
+  const descripcion = respuestaBD.descripcion ?? ''
   if (respuestaBD.exito) {
     const registrosAfectados = (respuestaBD.datos as OkPacket).affectedRows ?? 0
     respuestaBD.registrosAfectados = registrosAfectados
-    descripcion = respuestaBD.descripcion ?? ''
     mensaje = mensajesUsuario[0]
     if (consultaDeLectura) {
       if (
@@ -102,16 +101,16 @@ const validarParametrosConsulta = ({
 
 const enviarRespuesta = ({
   res,
-  descripcion,
   mensaje,
   respuestaBD,
+  descripcion,
   datosConsultaEspecial,
   fallo
 }: IParametrosenviarRespuesta): void => {
   let respuestaBackend: IrespuestaBackend = {
     exito: false,
     estado: 404,
-    descripcion,
+    descripcion: '',
     mensaje
   }
 
@@ -121,15 +120,27 @@ const enviarRespuesta = ({
         exito: true,
         estado: 200,
         respuestaBD,
-        descripcion,
+        descripcion: descripcion ?? respuestaBackend.respuestaBD?.descripcion,
         mensaje
       }
+      delete respuestaBackend.respuestaBD?.descripcion
     } else {
+      let errorSQLFiltrado: IerrorSQLFiltrado | undefined
+      if (respuestaBD.error !== undefined) {
+        const { errno, sqlState, code } = respuestaBD.error
+        errorSQLFiltrado = {
+          codigoError: errno,
+          EstadoSQL: sqlState,
+          codigoInterno: code,
+          detalleError: errores[errno] ?? undefined
+        }
+      }
+
       respuestaBackend = {
         exito: false,
         estado: 500,
-        descripcion,
-        error: respuestaBD.error,
+        descripcion: descripcion ?? respuestaBackend.respuestaBD?.descripcion,
+        error: errorSQLFiltrado,
         mensaje
       }
     }
@@ -139,7 +150,6 @@ const enviarRespuesta = ({
       estado: 200,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       datosConsultaEspecial,
-      descripcion,
       mensaje
     }
   } else if (fallo !== undefined && fallo) {
@@ -148,7 +158,6 @@ const enviarRespuesta = ({
       estado: 500,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       datosConsultaEspecial,
-      descripcion,
       mensaje
     }
   }

@@ -25,11 +25,12 @@ const consultarEnBD = async ({
   } catch (error) {
     respuesta = {
       exito: false,
+      descripcion: consulta.descripcion,
       datos: [] as RowDataPacket,
       error: error as Imysql2Error
     }
   }
-
+  console.log(respuesta.descripcion)
   return respuesta
 }
 
