@@ -14,7 +14,8 @@
     "check": "prettier --check .",
     "prettier": "prettier --write .",
     "lint": "eslint . --ext ts",
-    "fix": "eslint --fix . --ext ts"
+    "fix": "eslint --fix . --ext ts",
+    "fixall": "npm run check && npm run prettier && npm run lint && npm run fix"
   },
   "dependencies": {
     "bcrypt": "5.1.0",

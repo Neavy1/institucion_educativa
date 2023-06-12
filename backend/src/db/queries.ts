@@ -74,7 +74,7 @@ export const consultas: Iconsultas = {
   5: {
     metodo: metodos.get,
     parametros: ['idUsuario', 'idRol'],
-    consulta: `SELECT u.*, d.*, NULL AS url_hoja_de_vida, NULL AS salario, NULL AS fk_id_tipo_contrato
+    consulta: `SELECT u.sexo, u.nombres, u.apellidos, u.correo_electronico, u.telefono, u.url_foto, d.fk_id_estado_academico, dd.id_docente, dd.fk_id_departamento, dd.fk_id_tipo_contrato, da.id_administrativo
     FROM usuario u
     LEFT JOIN asignacion_roles ar ON u.id_usuario = ar.fk_id_usuario
     LEFT JOIN detalle_estudiante d ON u.id_usuario = d.id_estudiante AND ar.fk_id_rol = 1
@@ -92,12 +92,12 @@ export const consultas: Iconsultas = {
         FROM anio_periodo_academico
         JOIN institucion_educativa ON anio_periodo_academico.anio = institucion_educativa.anio_vigente
         AND anio_periodo_academico.fk_id_periodo_academico = institucion_educativa.periodo_academico_vigente;`,
-    descripcion: 'id del anio+periodo academio'
+    descripcion: 'id del anio + periodo academio'
   },
 
   7: {
     metodo: metodos.get,
-    parametros: ['idEstudiante', 'anio'],
+    parametros: ['idEstudiante', 'anio', 'idPeriodoAcademico'],
     consulta: `SELECT
         ma.fk_id_oferta_academica,
         pa.id_programa_academico,
@@ -147,7 +147,7 @@ export const consultas: Iconsultas = {
       'Historial del estudiante en todos sus grupos de una anio y periodo académico'
   },
 
-  //! Es mejor dejarlo para post entrega :v
+  //! Es mejor dejarlo para después de la entrega :v
   9: {
     metodo: metodos.get,
     parametros: ['idEstudiante'],
@@ -190,25 +190,17 @@ export const consultas: Iconsultas = {
     descripcion: 'Historial de notas del semestre de un estudiante'
   },
 
-  12: {
-    metodo: metodos.get,
-    parametros: ['idUsuario'],
-    consulta: `SELECT id_usuario, sexo, nombres, apellidos, correo_electronico, telefono, url_foto, e.*, d.id_docente, d.fk_id_departamento, d.fk_id_tipo_contrato
-    FROM usuario u
-    LEFT JOIN detalle_estudiante e ON u.id_usuario = e.id_estudiante
-    LEFT JOIN detalle_docente d ON u.id_usuario = d.id_docente
-    LEFT JOIN detalle_administrativo a ON u.id_usuario = a.id_administrativo
-    WHERE u.id_usuario = ?;`,
-    descripcion: 'Toda la información accesible de un usuario según su rol'
-  },
-
   13: {
     metodo: metodos.post,
-    parametros: ['idUsuario', 'nuevaContrasenaHash'],
+    parametros: ['nuevaContrasena', 'idUsuario'],
     consulta: `UPDATE usuario
-        SET contrasena_hash = ?,
+        SET contrasena_hash = ?
         WHERE id_usuario = ?;`,
     descripcion: 'Cambiar contraseña usuario'
+    // parametros: {
+    //   "idUsuario": 123,
+    //   "nuevaContrasena": "123"
+    // }
   },
 
   14: {
@@ -236,6 +228,7 @@ export const consultas: Iconsultas = {
   },
 
   15: {
+    //! Esta vainda retorna los flotantes como strings
     metodo: metodos.get,
     parametros: ['idEstudiante', 'idOfertaAcademica'],
     consulta: `SELECT subquery.creditos_aprobados, subquery.creditos_totales, ROUND(subquery.creditos_aprobados/  subquery.creditos_totales * 100, 2) AS ratio_aprobado
@@ -264,7 +257,7 @@ export const consultas: Iconsultas = {
     descripcion: 'Último periodo académico que matriculó un estudiante'
   },
 
-  //TODO: Esta función se va a eliminar en favor de la 12+1
+  //TODO: Esta función se va a eliminar en favor de la 18
   17: {
     metodo: metodos.get,
     parametros: ['idEstudiante', 'idGrupo'],
@@ -286,7 +279,7 @@ export const consultas: Iconsultas = {
   },
 
   18: {
-    metodo: metodos.post,
+    metodo: metodos.get,
     parametros: ['idEstudiante', 'idGrupo'],
     consulta: `INSERT INTO asignaturas_aprobadas_estudiante_programa_academico (fk_id_estudiante, fk_id_oferta_academica, fk_id_asignatura, nota_final_estudiante_asignatura)
     SELECT id_estudiante, id_oferta_academica, id_asignatura, nota_asignatura
@@ -314,8 +307,7 @@ export const consultas: Iconsultas = {
     INNER JOIN curso ON grupo.fk_id_curso = curso.id
     INNER JOIN oferta_academica oa ON curso.fk_id_oferta_academica = oa.id_oferta_academica
     WHERE ha.fk_id_estudiante = ?
-    AND curso.fk_id_oferta_academica = ?;
-  */`,
+    AND curso.fk_id_oferta_academica = ?;`,
     descripcion: 'Promedio de un estudiante en una oferta academica'
   },
 
@@ -353,7 +345,7 @@ export const consultas: Iconsultas = {
     asignatura.nombre,
     dia_semana.nombre_dia_semana,
     clase.hora_inicio,
-    clase.hora_final,
+    clase.duracion,
     ubicacion_clase.id_edificio,
     ubicacion_clase.id_salon
     FROM horario_clase
@@ -385,4 +377,8 @@ export const consultas: Iconsultas = {
     WHERE id_usuario = ?;`,
     descripcion: 'Validación de la contraseña de un usuario'
   }
+  // parametros: {
+  //   "idUsuario": 123,
+  //   "contrasenaIngresada": "123"
+  // }
 }

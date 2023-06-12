@@ -2,105 +2,176 @@ import type { Request, Response } from 'express'
 import { type RowDataPacket } from 'mysql2'
 import type {
   Ibody,
-  IcompararContrasena,
+  IconsultaDBconValidacionTotal,
   IconsultarBDPOST,
   IconsultasEspeciales,
-  IcontrasenaUsuarioBD
+  IparametrosYConsultaValidados
 } from '../interfaces'
-import { errores } from '../utils/dictionaries'
+import { errores, mensajesUsuario } from '../utils/dictionaries'
 import {
+  encriptarContrasena,
   enviarRespuesta,
-  validarContrasena,
-  validarParametrosConsulta,
-  validarRespuestaBD
+  procesarContrasena,
+  validarParametrosConsulta
 } from './auxiliar.functions'
-import { consultarEnBD } from './controller'
+import { consultarEnBDYValidar } from './controller'
+
+const consultaDBconValidacionTotal = async ({
+  res,
+  nConsulta,
+  nuevoArregloParametros
+}: IconsultaDBconValidacionTotal): Promise<IparametrosYConsultaValidados> => {
+  let parametrosCorrectos = false
+  let consultaCorrecta = false
+  let descripcion: string | undefined
+  let resultadosConsulta: RowDataPacket[] | undefined
+
+  const parametrosValidados = validarParametrosConsulta({
+    res,
+    numeroConsulta: nConsulta,
+    consultasEspeciales,
+    parametros: nuevoArregloParametros
+  })
+
+  if (parametrosValidados.parametrosCorrectos) {
+    parametrosCorrectos = true
+
+    const {
+      consultaExitosa,
+      descripcion: descripcionConsulta,
+      respuestaRevisadaBD
+    } = await consultarEnBDYValidar({
+      res,
+      parametrosValidados
+    })
+
+    consultaCorrecta = consultaExitosa
+    descripcion = descripcionConsulta
+    resultadosConsulta = respuestaRevisadaBD.datos as RowDataPacket[]
+  }
+
+  const parametrosYConsultaValidados: IparametrosYConsultaValidados = {
+    parametrosCorrectos,
+    consultaCorrecta,
+    resultadosConsulta,
+    descripcion
+  }
+
+  return parametrosYConsultaValidados
+}
 
 const validarContrasenaUsuario = async ({
   res,
   body,
-  parametrosValidados
+  nConsulta
 }: IconsultarBDPOST): Promise<void> => {
   const { idUsuario, contrasenaIngresada } = body
-  let mensaje: string | undefined
-  let comparacionContrasena: IcompararContrasena = {
-    comparacionExitosa: false,
-    contrasenaCorrecta: false
-  }
 
-  const respuestaBD = await consultarEnBD({
-    consulta: parametrosValidados.consulta,
-    arregloParametros: [idUsuario]
+  const {
+    parametrosCorrectos,
+    consultaCorrecta,
+    resultadosConsulta,
+    descripcion
+  } = await consultaDBconValidacionTotal({
+    res,
+    nuevoArregloParametros: [idUsuario, contrasenaIngresada],
+    nConsulta
   })
 
-  const respuestaBDValidada = validarRespuestaBD({
-    respuestaBD,
-    consultaDeLectura: parametrosValidados.consultaDeLectura
-  })
-
-  const resultadosConsulta = respuestaBDValidada.respuestaRevisadaBD
-    .datos as RowDataPacket[]
-
-  if (resultadosConsulta.length > 0) {
-    comparacionContrasena = await validarContrasena({
-      contrasenaIngresada: contrasenaIngresada as string,
-      contrasenaHash: (resultadosConsulta[0] as IcontrasenaUsuarioBD)
-        .contrasena_hash
-    })
-    mensaje = comparacionContrasena.comparacionExitosa
-      ? undefined
-      : comparacionContrasena.error
-  } else {
-    mensaje = errores[7]
+  if (!parametrosCorrectos || !consultaCorrecta) {
+    return
   }
+
+  const { comparacionContrasena, mensaje } = await procesarContrasena({
+    resultadosConsulta: resultadosConsulta as RowDataPacket[],
+    contrasenaIngresada: contrasenaIngresada as string
+  })
 
   enviarRespuesta({
     res,
     datosConsultaEspecial: comparacionContrasena,
-    descripcion: respuestaBD.descripcion,
+    descripcion,
     mensaje
   })
 }
 
+const cambiarContrasenaUsuario = async ({
+  res,
+  body,
+  nConsulta
+}: IconsultarBDPOST): Promise<void> => {
+  const { idUsuario, nuevaContrasena } = body
+  const contrasena = (nuevaContrasena as string).toString()
+  let mensaje: string | undefined
+  let descripcion: string | undefined
+  let fallo: boolean | undefined
+
+  const { encriptacionExitosa, contrasenaHash, error } =
+    await encriptarContrasena(contrasena)
+
+  if (encriptacionExitosa) {
+    const {
+      parametrosCorrectos,
+      consultaCorrecta,
+      descripcion: descripcionConsulta
+    } = await consultaDBconValidacionTotal({
+      res,
+      nuevoArregloParametros: [contrasenaHash, idUsuario],
+      nConsulta
+    })
+
+    if (!parametrosCorrectos || !consultaCorrecta) {
+      return
+    }
+
+    fallo = false
+    mensaje = mensajesUsuario[3]
+    descripcion = descripcionConsulta
+  } else {
+    mensaje = error
+    fallo = true
+  }
+
+  enviarRespuesta({
+    res,
+    descripcion,
+    mensaje,
+    fallo
+  })
+}
+
 const consultasEspeciales: IconsultasEspeciales = {
-  23: validarContrasenaUsuario
+  23: validarContrasenaUsuario,
+  13: cambiarContrasenaUsuario
 }
 
 const manejadorDeConsultas = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { numeroConsulta, parametro1, parametro2, parametro3 } = req.query
+  const { numeroConsulta, parametro1, parametro2, parametro3, parametro4 } =
+    req.query
 
   const parametrosValidados = validarParametrosConsulta({
-    numeroConsulta: numeroConsulta as string,
+    res,
+    numeroConsulta,
     consultasEspeciales,
-    parametros: [
-      parametro1 as string,
-      parametro2 as string,
-      parametro3 as string
-    ]
+    parametros: [parametro1, parametro2, parametro3, parametro4]
   })
 
   if (!parametrosValidados.parametrosCorrectos) {
-    enviarRespuesta({
-      res,
-      mensaje: parametrosValidados.mensaje,
-      fallo: true
-    })
     return
   }
 
   if (parametrosValidados.consultaDeLectura) {
-    const respuestaBD = await consultarEnBD({
-      consulta: parametrosValidados.consulta,
-      arregloParametros: parametrosValidados.arregloParametros
+    const respuestaBDValidada = await consultarEnBDYValidar({
+      res,
+      parametrosValidados
     })
 
-    const respuestaBDValidada = validarRespuestaBD({
-      respuestaBD,
-      consultaDeLectura: parametrosValidados.consultaDeLectura
-    })
+    if (!respuestaBDValidada.consultaExitosa) {
+      return
+    }
 
     enviarRespuesta({
       res,
@@ -117,7 +188,7 @@ const manejadorDeConsultas = async (
       await consultasEspeciales[nConsulta]({
         res,
         body: req.body as Ibody,
-        parametrosValidados
+        nConsulta
       })
     } else {
       enviarRespuesta({
