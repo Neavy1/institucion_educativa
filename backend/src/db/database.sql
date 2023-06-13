@@ -423,17 +423,22 @@ SELECT AVG(ROUND((ha.nota_1 + ha.nota_2 + ha.nota_3 + ha.nota_4) / 4, 1)) AS pro
 //* 4. Cambiar contraseña usuario (id_usuario, nueva_contrasena_salt, nueva_contrasena_hash)
 //* 5. Modificar notas(id_estudiante, id_grupo, nota1, nota2, nota3, nota4) => UPDATE en tabla historial_academico * notas
 //! PORTAL ESTUDIANTIL
-//* 1. SELECT id_anio_periodo_academico() (lo saca de la tabla institucion_educativa)
-//* 2. Lista de ofertas académicas de un estudiante(id_estudiante, anio, id_periodo_academico)
-//* 3. Historial del estudiante en todos sus grupos de una anio y id_periodo_academico(id_estudiante, anio, id_periodo_academico)
-//* 3. Historial del estudiante en TODA su historia(id_estudiante)
-//* 5. Obtener la matrícula académica de un estudiante(id_estudiante, id_oferta_academica)
-//* 6. Historial de notas del semestre(id_estudiante, id_oferta_academica)
 //* 7. Obtener información de un estudiante
-//* 8. Cambiar contraseña usuario (id_usuario, nueva_contrasena_salt, nueva_contrasena_hash)
+//* 1. SELECT id_anio_periodo_academico() (lo saca de la tabla institucion_educativa)
+//* 5. Obtener la matrícula académica de un estudiante(id_estudiante, id_oferta_academica)
+
+//* 3. Historial del estudiante en todos sus grupos de una anio y id_periodo_academico(id_estudiante, anio, id_periodo_academico)
+
+//* 6. Historial de notas del semestre(id_estudiante, id_oferta_academica)
+//* 3. Historial del estudiante en TODA su historia(id_estudiante)
+
+
 //* 9. Créditos matriculados por un estudiante en un periodo académico y en un programa académico(d_estudiante, id_programa_academico, anio, id_periodo_tiempo)
 //* 10. Ubicación semestral de un estudiante en un programa académico(id_estudiante, id_oferta_academica)
 //* 11. Último periodo académico que matriculó un estudiante(id_estudiante)
+
+
+//* 8. Cambiar contraseña usuario (id_usuario, nueva_contrasena_salt, nueva_contrasena_hash)
 //* 12. Registro nota final estudiante en un grupo(id_estudiante, id_grupo)
 //* 13. Registrar como aprobada una asignatura por un estudiante si su nota en el grupo es >= 3(id_estudiante, id_grupo)
 //* 14. Promedio de un estudiante en una oferta academica(id_estudiante, id_oferta_academica)

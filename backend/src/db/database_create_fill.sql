@@ -413,7 +413,7 @@ INSERT INTO `usuario` (`id_usuario`, `sexo`, `nombres`, `apellidos`, `correo_ele
 (6, 1, 'Wilson', 'Arenas Valencia', 'warenas@utp.edu.co', '123', '123', NULL),
 (111, 1, 'Edsger ', 'Dijkstra', 'eDijkstra@utp.edu.co', '111', '111', NULL),
 (222, 1, 'Eduardo', 'Sáenz de Cabezón', 'derivando@utp.edu.co', '222', '222', NULL),
-(333, 1, 'Jose Luis', 'Crespo Cepeda', 'quantumfracture@utp.edu.co', '333', '333', NULL),
+(333, 1, 'Jose Luis', 'Crespo Cepeda', 'quantumfracture@utp.edu.co', '333', NULL),
 (444, 1, 'Javier', 'Santaolalla', 'dateunvoltio@utp.edu.co', '444', '444', 'dmfkifj', NULL),
 (777, 1, 'Ludwig', 'Von Bertalanffy', 'ludwig@utp.edu.co', '777', '777', NULL),
 (6688, 1, 'Richard', 'Dorf', 'dorf@utp.edu.co', '6688', '6688', NULL),
@@ -436,7 +436,6 @@ INSERT INTO `usuario` (`id_usuario`, `sexo`, `nombres`, `apellidos`, `correo_ele
 (791, 1, 'Will', 'Smith', 'wsmith@utp.edu.co', '791', '791', NULL),
 (792, 2, 'Selena', 'Gomez', 'selena@utp.edu.co', '792', '792', NULL),
 (12345, 2, 'Maria Camila', 'Ramirez', 'm.ramirez8@utp.edu.co', '3333335', '12345', NULL);
-COMMIT;
 
 
 --

@@ -1,0 +1,17 @@
+ion-avatar {
+  width: 2rem;
+  height: 2rem;
+  margin: auto;
+}
+
+.avataricon {
+  filter: invert();
+}
+
+/* .overlay-accordion {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+} */

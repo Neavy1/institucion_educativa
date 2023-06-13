@@ -1,0 +1,102 @@
+.image {
+  width: 10rem;
+  height: 10rem;
+  margin: auto;
+  padding: 0;
+}
+
+ion-accordion-group {
+  width: 100%;
+}
+
+.accordion {
+  border-radius: 10px;
+}
+
+/* ion-grid {
+  padding: 0;
+} */
+
+.username {
+  /* padding-bottom: 10px; */
+  font-size: x-large;
+  font-weight: var(--min-height);
+  text-align: center;
+  color: var(--ion-color-primary-contrast);
+}
+
+.split-pane-visible > ion-menu {
+  max-width: 300px !important;
+  border-inline-end: 0;
+}
+
+ion-menu {
+  --ion-background-color: var(--ion-color-tertiary);
+}
+
+ion-menu ion-header {
+  --ion-background-color: var(--ion-color-primary);
+}
+
+/* ion-menu.md ion-list-header,
+ion-menu.md ion-note {
+  padding-left: 10px;
+}
+
+ion-menu.md ion-item {
+  --padding-start: 10px;
+  --padding-end: 10px;
+  border-radius: 4px;
+} */
+
+ion-menu.md ion-item.selected {
+  --background: rgba(var(--ion-color-primary-rgb), 0.14);
+}
+
+ion-item.selected {
+  --color: var(--ion-color-secondary);
+}
+
+ion-menu.md ion-item.selected ion-icon {
+  color: #66a5ad;
+}
+
+/* ion-menu::part(container) {
+  border-radius: 25px;
+} */
+
+ion-menu.md ion-item ion-icon {
+  color: #616e7e;
+}
+
+ion-menu.ios ion-item ion-icon {
+  font-size: 24px;
+  color: #73849a;
+}
+
+ion-menu.ios ion-item .selected ion-icon {
+  color: var(--ion-color-primary);
+}
+
+ion-accordion {
+  margin: 0 auto;
+}
+
+ion-accordion.accordion-expanding,
+ion-accordion.accordion-expanded {
+  width: calc(100% - 32px);
+
+  margin: 16px auto;
+}
+
+ion-accordion.accordion-collapsing ion-item[slot='header'],
+ion-accordion.accordion-collapsed ion-item[slot='header'] {
+  --background: var(--ion-color-light);
+  --color: var(--ion-color-light-contrast);
+}
+
+ion-accordion.accordion-expanding ion-item[slot='header'],
+ion-accordion.accordion-expanded ion-item[slot='header'] {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}

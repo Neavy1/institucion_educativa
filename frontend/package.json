@@ -7,14 +7,16 @@
   "scripts": {
     "dev": "ionic serve",
     "dev1": "vite",
-    "build": "npm run prettier && npm run fix && tsc && vite build",
+    "build": "npm run fixall && tsc && vite build",
     "preview": "vite preview",
     "check": "prettier --check .",
     "prettier": "prettier --write .",
     "lint": "eslint . --ext ts,tsx",
-    "fix": "eslint --fix . --ext ts,tsx"
+    "fix": "eslint --fix . --ext ts,tsx",
+    "fixall": "npm run check && npm run prettier && npm run lint && npm run fix"
   },
   "dependencies": {
+    "@capacitor/android": "5.0.4",
     "@capacitor/app": "5.0.2",
     "@capacitor/core": "5.0.4",
     "@capacitor/haptics": "5.0.2",
@@ -48,6 +50,7 @@
     "jsdom": "22.1.0",
     "prettier": "2.8.8",
     "typescript": "4.9.5",
-    "vite": "4.3.9"
+    "vite": "4.3.9",
+    "vite-plugin-pwa": "0.16.4"
   }
 }

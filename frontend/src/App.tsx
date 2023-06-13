@@ -1,3 +1,4 @@
+import { App as CapacitorApp } from '@capacitor/app'
 import {
   IonApp,
   IonRouterOutlet,
@@ -5,9 +6,9 @@ import {
   setupIonicReact
 } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
+import { useEffect } from 'react'
 import { Redirect, Route } from 'react-router-dom'
-import Menu from './components/Menu'
-import Page from './pages/Page'
+import Portal from './pages/Portal/Portal'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -26,11 +27,35 @@ import '@ionic/react/css/text-alignment.css'
 import '@ionic/react/css/text-transformation.css'
 
 /* Theme variables */
+import Menu from './components/Menu/Menu'
+import { roles } from './interfaces'
 import './theme/variables.css'
 
-setupIonicReact()
+setupIonicReact({
+  animated: true
+})
 
 const App: React.FC = () => {
+  useEffect(() => {
+    CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+      //TODO canGoBack?
+      if (canGoBack) {
+        window.history.back()
+      } else {
+        if (
+          window.location.pathname === '/' ||
+          window.location.pathname === '/Login'
+        ) {
+          CapacitorApp.exitApp().catch((error) => {
+            console.log(error)
+          })
+        }
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+  }, [])
+
   return (
     <IonApp>
       <IonReactRouter>
@@ -38,10 +63,10 @@ const App: React.FC = () => {
           <Menu />
           <IonRouterOutlet id='main'>
             <Route path='/' exact={true}>
-              <Redirect to='/folder/Inbox' />
+              <Redirect to={`/portal/${roles[1]}`} />
             </Route>
-            <Route path='/folder/:name' exact={true}>
-              <Page />
+            <Route path={`/portal/${roles[1]}`} exact={true}>
+              <Portal />
             </Route>
           </IonRouterOutlet>
         </IonSplitPane>

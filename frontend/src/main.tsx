@@ -6,6 +6,7 @@ const container = document.getElementById('root')
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = createRoot(container!)
 root.render(
+  //TODO: remove strict mode on production
   <React.StrictMode>
     <App />
   </React.StrictMode>

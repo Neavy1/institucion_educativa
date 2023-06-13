@@ -96,6 +96,7 @@ export const consultas: Iconsultas = {
   },
 
   7: {
+    //! Esto no sirve pa un carajo
     metodo: metodos.get,
     parametros: ['idEstudiante', 'anio', 'idPeriodoAcademico'],
     consulta: `SELECT
@@ -187,7 +188,8 @@ export const consultas: Iconsultas = {
         JOIN asignatura a ON n.fk_id_asignatura = a.id_asignatura
         JOIN matricula_academica ma ON n.fk_id_matricula_academica = ma.id_matricula_academica
         WHERE ma.fk_id_estudiante = ? AND ma.fk_id_oferta_academica = ?;`,
-    descripcion: 'Historial de notas del semestre de un estudiante'
+    descripcion:
+      'Notas finales de un estudiante en sus asignaturas matriculadas un semestre'
   },
 
   13: {
