@@ -1,8 +1,7 @@
 import {
   metodos,
   type IconsultaRespuesta,
-  type Iconsultas,
-  type IobtenerRuta
+  type Iconsultas
 } from '../interfaces'
 
 const obtenerConsulta = (numeroConsulta: number): IconsultaRespuesta => {
@@ -15,23 +14,7 @@ const obtenerConsulta = (numeroConsulta: number): IconsultaRespuesta => {
   return consultaRespuesta
 }
 
-//! Esta función va para el Frontend
-const obtenerRuta = ({
-  numeroConsulta,
-  arregloParametros
-}: IobtenerRuta): string => {
-  // rutaLectura = http://localhost:3000/api/lectura?numeroConsulta=1&parametro1=111&parametro2=222&parametro3=333
-  // rutaLectura = http://localhost:3000/api/escritura?numeroConsulta=1&parametro1=111&parametro2=222&parametro3=333
-  //TODO: importar endpoint base de las variables de entorno y ponerlo al inicio de la ruta
-  let ruta = `?numeroConsulta=${numeroConsulta}`
-  arregloParametros.forEach((parametro, indice) => {
-    ruta += `&parametro${indice + 1}=${parametro}`
-  })
-
-  return ruta
-}
-
-export { obtenerConsulta, obtenerRuta }
+export { obtenerConsulta }
 
 export const consultas: Iconsultas = {
   //? 1. Módulo de inicio
@@ -88,15 +71,14 @@ export const consultas: Iconsultas = {
   6: {
     metodo: metodos.get,
     parametros: [],
-    consulta: `SELECT id_anio_periodo_academico
+    consulta: `SELECT id_anio_periodo_academico, ie.anio_vigente AS anio, ie.periodo_academico_vigente AS periodo_academico
         FROM anio_periodo_academico
-        JOIN institucion_educativa ON anio_periodo_academico.anio = institucion_educativa.anio_vigente
-        AND anio_periodo_academico.fk_id_periodo_academico = institucion_educativa.periodo_academico_vigente;`,
+        JOIN institucion_educativa ie ON anio_periodo_academico.anio = ie.anio_vigente
+        AND anio_periodo_academico.fk_id_periodo_academico = ie.periodo_academico_vigente;`,
     descripcion: 'id del anio + periodo academio'
   },
 
   7: {
-    //! Esto no sirve pa un carajo
     metodo: metodos.get,
     parametros: ['idEstudiante', 'anio', 'idPeriodoAcademico'],
     consulta: `SELECT
@@ -373,7 +355,7 @@ export const consultas: Iconsultas = {
 
   23: {
     metodo: metodos.post,
-    parametros: ['idUsuario'],
+    parametros: ['idUsuario', 'contrasenaIngresada'],
     consulta: `SELECT contrasena_hash
     FROM usuario
     WHERE id_usuario = ?;`,

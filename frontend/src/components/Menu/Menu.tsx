@@ -10,69 +10,19 @@ import {
   IonIcon,
   IonItem,
   IonLabel,
-  IonList,
   IonMenu,
-  IonMenuToggle,
   IonRow,
+  IonSelect,
+  IonSelectOption,
   IonTitle,
   IonToolbar
 } from '@ionic/react'
-
-import {
-  archiveOutline,
-  archiveSharp,
-  heartOutline,
-  heartSharp,
-  mailSharp,
-  paperPlaneOutline,
-  paperPlaneSharp
-} from 'ionicons/icons'
-import { useLocation } from 'react-router-dom'
+import { homeSharp } from 'ionicons/icons'
 import image from '../../assets/img/logo.svg'
+import { pestanasAplicacion } from '../../interfaces'
 import './Menu.css'
 
-interface AppPage {
-  url: string
-  iosIcon: string
-  mdIcon: string
-  titulo: string
-  subpaneles: string[]
-}
-
-const paginasAplicacion: AppPage[] = [
-  {
-    titulo: 'Inicio',
-    url: '/portal/Portal%20estudiantil',
-    iosIcon: mailSharp,
-    mdIcon: mailSharp,
-    subpaneles: []
-  },
-  {
-    titulo: 'Mis cursos',
-    url: '/page/Outbox',
-    iosIcon: paperPlaneOutline,
-    mdIcon: paperPlaneSharp,
-    subpaneles: ['Notas parciales', 'Asignaturas']
-  },
-  {
-    titulo: 'Horario',
-    url: '/page/Archived',
-    iosIcon: archiveOutline,
-    mdIcon: archiveSharp,
-    subpaneles: ['Ver horario', 'Editar horario']
-  },
-  {
-    titulo: 'Matrícula académica',
-    url: '/page/Favorites',
-    iosIcon: heartOutline,
-    mdIcon: heartSharp,
-    subpaneles: ['Pensum de mi programa', 'Historial académico', 'Mi progreso']
-  }
-]
-
 const Menu: React.FC = () => {
-  const location = useLocation()
-
   return (
     <IonMenu disabled={false} contentId='main' type='overlay'>
       <IonHeader>
@@ -91,48 +41,85 @@ const Menu: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent>
+      <IonContent className='no-scroll'>
         <IonGrid>
           <IonRow>
-            <IonAccordionGroup>
-              <IonAccordion className='accordion'>
-                <IonItem slot='header' color='light'>
-                  <IonLabel>Ingeniería de sistemas</IonLabel>
-                </IonItem>
-                <div className='ion-padding' slot='content'>
-                  Ingeniería Industrial
-                </div>
-              </IonAccordion>
-            </IonAccordionGroup>
+            <IonCol>
+              <IonTitle style={{ fontSize: '1.5rem' }} color='primary'>
+                Programa académico
+              </IonTitle>
+              <IonItem lines='full'>
+                <IonSelect
+                  placeholder='Selecciona tu programa'
+                  justify='start'
+                  interface='popover'
+                >
+                  <IonSelectOption value='brown'>
+                    Ingeniería de Sistemas
+                  </IonSelectOption>
+                  <IonSelectOption value='blonde'>
+                    Ingeniería industrial
+                  </IonSelectOption>
+                  <IonSelectOption value='red'>
+                    Licenciatura en Bilingüismo
+                  </IonSelectOption>
+                </IonSelect>
+              </IonItem>
+            </IonCol>
+          </IonRow>
+
+          <IonRow>
+            <IonCol className='margenVertical'>
+              <IonItem
+                className='inicio'
+                color='light'
+                lines='none'
+                detail={false}
+              >
+                <IonIcon slot='start' ios={homeSharp} md={homeSharp} />
+                <IonLabel>Inicio</IonLabel>
+              </IonItem>
+            </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonList id='menu-options'>
-                {paginasAplicacion.map((appPage, index) => {
+              <IonAccordionGroup multiple={true}>
+                {pestanasAplicacion.map((pagina, index) => {
                   return (
-                    <IonMenuToggle key={index} autoHide={false}>
+                    <IonAccordion
+                      key={index}
+                      className='accordion margenVertical'
+                    >
                       <IonItem
-                        className={
-                          location.pathname === appPage.url
-                            ? 'selected ion-margin-vertical'
-                            : 'ion-margin-vertical'
-                        }
-                        routerLink={appPage.url}
-                        routerDirection='none'
+                        slot='header'
+                        color='light'
                         lines='none'
                         detail={false}
                       >
                         <IonIcon
                           slot='start'
-                          ios={appPage.iosIcon}
-                          md={appPage.mdIcon}
+                          ios={pagina.iosIcon}
+                          md={pagina.mdIcon}
                         />
-                        <IonLabel>{appPage.titulo}</IonLabel>
+                        <IonLabel>{pagina.titulo}</IonLabel>
                       </IonItem>
-                    </IonMenuToggle>
+                      {pagina.subpaneles.map((subpanel, index) => {
+                        return (
+                          <IonItem
+                            key={index}
+                            className='ion-margin'
+                            slot='content'
+                            lines='full'
+                            // onClick={}
+                          >
+                            <IonLabel>{subpanel}</IonLabel>
+                          </IonItem>
+                        )
+                      })}
+                    </IonAccordion>
                   )
                 })}
-              </IonList>
+              </IonAccordionGroup>
             </IonCol>
           </IonRow>
           <IonRow class='logout'>

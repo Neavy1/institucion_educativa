@@ -62,6 +62,15 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-tint: #cae2e9;
 }
 
+.no-scroll {
+  --offset-bottom: auto !important;
+  --overflow: hidden;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @media (prefers-color-scheme: dar) {
   /*
    * Dark Colors

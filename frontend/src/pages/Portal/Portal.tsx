@@ -1,13 +1,14 @@
 import { IonPage } from '@ionic/react'
-import PortalEstudiante from '../../components/PortalEstudiante/PortalEstudiante'
-import Header from '../../components/Toolbar/Header'
+import InicioEstudiante from '../../Tabs/Estudiantes/InicioEstudiante/InicioEstudiante'
+import Header from '../../components/Header/Header'
+import type { IportalProps } from '../../interfaces'
 import './Portal.css'
 
-const Portal: React.FC = () => {
+const Portal: React.FC<IportalProps> = ({ rolUsuario }) => {
   return (
     <IonPage>
       <Header />
-      <PortalEstudiante />
+      <InicioEstudiante />
     </IonPage>
   )
 }

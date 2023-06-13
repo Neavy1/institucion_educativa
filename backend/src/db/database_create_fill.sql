@@ -485,9 +485,9 @@ INSERT INTO `permiso` (`nombre_permiso`, `descripcion`) VALUES
 --
 
 INSERT INTO `rol` (`nombre_rol`) VALUES
-('Administrativo'),
+('Estudiante'),
 ('Docente'),
-('Estudiante');
+('Administrativo');
 
 --
 -- Volcado de datos para la tabla `rol_permiso`

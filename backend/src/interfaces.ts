@@ -39,10 +39,6 @@ export interface IParametrosenviarRespuesta {
   datosConsultaEspecial?: any
 }
 
-export interface IobtenerRuta {
-  numeroConsulta: number | string
-  arregloParametros: number[] | string[]
-}
 export interface IconsultaRespuesta {
   consulta: string
   descripcion: string
@@ -146,7 +142,6 @@ export type Iconsultas = Record<
     parametros: string[]
   }
 >
-export type Iconsultas2 = Record<number, Record<number, string>>
 
 export type IconsultasEspeciales = Record<
   number,
