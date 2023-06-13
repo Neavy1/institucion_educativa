@@ -30,6 +30,7 @@ import '@ionic/react/css/text-transformation.css'
 import Menu from './components/Menu/Menu'
 import { autorizarInicioSesion } from './controller/api.methods'
 import { roles } from './interfaces'
+import IniciarSesion from './pages/IniciarSesion/IniciarSesion'
 import './theme/variables.css'
 setupIonicReact({
   animated: true
@@ -74,11 +75,11 @@ const App: React.FC = () => {
           <Menu />
           <IonRouterOutlet id='main'>
             <Route path='/' exact={true}>
-              <Redirect to={`/portal/${roles.estudiante}`} />
+              <Redirect to='/portal/login' />
             </Route>
-            {/* <Route path='/portal/login' exact={true}>
+            <Route path='/portal/login' exact={true}>
               <IniciarSesion />
-            </Route> */}
+            </Route>
             <Route path={`/portal/${roles.estudiante}`} exact={true}>
               <Portal rolUsuario={roles.estudiante} />
             </Route>

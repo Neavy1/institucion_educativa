@@ -5,11 +5,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "start": "ionic serve",
+    "start": "vite",
     "dev": "ionic serve",
     "postinstall": "tsc",
-    "dev1": "vite",
-    "build": "npm run fixall && tsc && vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "check": "prettier --check .",
     "prettier": "prettier --write .",

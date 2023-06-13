@@ -29,7 +29,7 @@ const Menu: React.FC = () => {
         <IonToolbar>
           <IonGrid>
             <IonCol>
-              <IonRow>
+              <IonRow className='ion-padding-vertical'>
                 {
                   <div className='image'>
                     <img src={image} alt='avatar' />
@@ -41,11 +41,15 @@ const Menu: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent className='no-scroll'>
+      <IonContent className='no-scroll ion-padding-top'>
         <IonGrid>
           <IonRow>
-            <IonCol>
-              <IonTitle style={{ fontSize: '1.5rem' }} color='primary'>
+            <IonCol className='ion-margin-horizontal'>
+              <IonTitle
+                className='ion-margin-horizontal'
+                style={{ fontSize: '1.5rem' }}
+                color='primary'
+              >
                 Programa académico
               </IonTitle>
               <IonItem lines='full'>
@@ -69,20 +73,21 @@ const Menu: React.FC = () => {
           </IonRow>
 
           <IonRow>
-            <IonCol className='margenVertical'>
+            <IonCol className='margenVertical ion-margin-horizontal'>
               <IonItem
                 className='inicio'
+                routerLink='/portal/login'
                 color='light'
                 lines='none'
                 detail={false}
               >
                 <IonIcon slot='start' ios={homeSharp} md={homeSharp} />
-                <IonLabel>Inicio</IonLabel>
+                <IonLabel className='ion-margin-start'>Inicio</IonLabel>
               </IonItem>
             </IonCol>
           </IonRow>
           <IonRow>
-            <IonCol>
+            <IonCol className='ion-margin-horizontal'>
               <IonAccordionGroup multiple={true}>
                 {pestanasAplicacion.map((pagina, index) => {
                   return (
@@ -101,7 +106,9 @@ const Menu: React.FC = () => {
                           ios={pagina.iosIcon}
                           md={pagina.mdIcon}
                         />
-                        <IonLabel>{pagina.titulo}</IonLabel>
+                        <IonLabel className='ion-margin-start'>
+                          {pagina.titulo}
+                        </IonLabel>
                       </IonItem>
                       {pagina.subpaneles.map((subpanel, index) => {
                         return (
@@ -122,7 +129,7 @@ const Menu: React.FC = () => {
               </IonAccordionGroup>
             </IonCol>
           </IonRow>
-          <IonRow class='logout'>
+          <IonRow class='logout ion-margin-horizontal ion-padding-top'>
             <IonCol>
               <IonButton className='button' expand='block'>
                 Cerrar sesión

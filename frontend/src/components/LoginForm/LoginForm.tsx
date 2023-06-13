@@ -78,23 +78,48 @@ const IniciarSesion: React.FC = () => {
           className='ion-margin-top'
         >
           <IonLabel
-            color='tertiary'
+            color='primary'
             style={{ fontSize: '1.5rem' }}
             position='floating'
           >
-            Número de cédula
+            Usuario
           </IonLabel>
           <IonInput
-            color='tertiary'
+            color='secondary'
             required
-            type='number'
+            type='text'
             clearInput
             value={usuario}
-            onIonChange={(e) => {
-              if (e.detail.value !== '' && e.detail.value !== undefined) {
-                setUsuario(e.detail.value ?? '')
-              }
-            }}
+            // onIonChange={(e) => {
+            //   if (e.detail.value !== '' && e.detail.value !== undefined) {
+            //     setUsuario(e.detail.value ?? '')
+            //   }
+            // }}
+          />
+        </IonItem>
+        <IonItem
+          color='none'
+          style={{ width: '15rem', margin: 'auto' }}
+          className='ion-margin-top'
+        >
+          <IonLabel
+            color='primary'
+            style={{ fontSize: '1.5rem' }}
+            position='floating'
+          >
+            Contraseña
+          </IonLabel>
+          <IonInput
+            color='secondary'
+            required
+            type='text'
+            clearInput
+            value={usuario}
+            // onIonChange={(e) => {
+            //   if (e.detail.value !== '' && e.detail.value !== undefined) {
+            //     setUsuario(e.detail.value ?? '')
+            //   }
+            // }}
           />
         </IonItem>
 

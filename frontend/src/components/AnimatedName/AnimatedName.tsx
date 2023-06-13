@@ -15,8 +15,8 @@ const Animation: React.FC = () => {
 
         <div className='role'>
           <div className='block'></div>
-          <p className='text1'>Cuenta &zwnj;</p>
-          <p className='text2'>contigo</p>
+          <p className='text1'>English &zwnj;</p>
+          <p className='text2'>vibes</p>
         </div>
       </div>
     </div>

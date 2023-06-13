@@ -2,7 +2,7 @@
   width: 10rem;
   height: 10rem;
   margin: auto;
-  padding: 0;
+  /* padding: auto; */
 }
 
 ion-accordion-group {
