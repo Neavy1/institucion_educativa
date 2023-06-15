@@ -4,23 +4,36 @@ import {
   IonButton,
   IonInput,
   IonItem,
-  IonLabel
+  IonLabel,
+  IonSelect,
+  IonSelectOption
 } from '@ionic/react'
-import React, {
-  Fragment,
-  createRef,
-  useCallback,
-  useEffect,
-  useState
-} from 'react'
+import React, { Fragment, createRef, useEffect } from 'react'
 import './LoginForm.css'
 
 // export interface IParametrosIniciarSesion {
 //   setUsuarioRegistrado: (usuario: string) => void
 // }
 
-const IniciarSesion: React.FC = () => {
-  const [usuario, setUsuario] = useState('')
+export interface LoginFormProps {
+  setRolUsuario: (rolUsuario: number) => void
+}
+
+export type Irutas = Record<number, string>
+
+const rutas: Irutas = {
+  1: '/portal/estudiante',
+  2: '/portal/docente',
+  3: '/portal/administrativo'
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ setRolUsuario }) => {
+  let rolSeleccionado: number = 1
+
+  const styles = {
+    minWidth: 'fit-content',
+    paddingRight: '1.5%'
+  }
 
   const formAnimation = createRef<CreateAnimation>()
 
@@ -37,14 +50,6 @@ const IniciarSesion: React.FC = () => {
       })
     }
   }, [formAnimation])
-
-  const iniciarSesion = useCallback(() => {
-    if (usuario === '') {
-      console.log('Compruebe los datos')
-    } else {
-      console.log(usuario)
-    }
-  }, [usuario])
 
   return (
     <Fragment>
@@ -72,6 +77,24 @@ const IniciarSesion: React.FC = () => {
           { property: 'opacity', fromValue: '0', toValue: '1' }
         ]}
       >
+        <IonItem style={{ width: '17rem', margin: 'auto' }}>
+          <IonSelect
+            label='Selecciona un rol'
+            interface='popover'
+            mode='ios'
+            style={styles}
+            // slot='end'
+            value={1}
+            onIonChange={(e) => {
+              setRolUsuario(e.detail.value as number)
+              rolSeleccionado = e.detail.value as number
+            }}
+          >
+            <IonSelectOption value={1}>Estudiante</IonSelectOption>
+            <IonSelectOption value={2}>Docente</IonSelectOption>
+            <IonSelectOption value={3}>Administrativo</IonSelectOption>
+          </IonSelect>
+        </IonItem>
         <IonItem
           color='none'
           style={{ width: '15rem', margin: 'auto' }}
@@ -89,7 +112,6 @@ const IniciarSesion: React.FC = () => {
             required
             type='text'
             clearInput
-            value={usuario}
             // onIonChange={(e) => {
             //   if (e.detail.value !== '' && e.detail.value !== undefined) {
             //     setUsuario(e.detail.value ?? '')
@@ -114,7 +136,6 @@ const IniciarSesion: React.FC = () => {
             required
             type='text'
             clearInput
-            value={usuario}
             // onIonChange={(e) => {
             //   if (e.detail.value !== '' && e.detail.value !== undefined) {
             //     setUsuario(e.detail.value ?? '')
@@ -131,8 +152,8 @@ const IniciarSesion: React.FC = () => {
           expand='block'
           shape='round'
           fill='solid'
+          routerLink={rutas[rolSeleccionado]}
           color='primary'
-          onClick={iniciarSesion}
         >
           Iniciar sesión
         </IonButton>
@@ -141,4 +162,4 @@ const IniciarSesion: React.FC = () => {
   )
 }
 
-export default React.memo(IniciarSesion)
+export default React.memo(LoginForm)

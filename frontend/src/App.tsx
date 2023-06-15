@@ -6,7 +6,7 @@ import {
   setupIonicReact
 } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Redirect, Route } from 'react-router-dom'
 import Portal from './pages/Portal/Portal'
 
@@ -37,6 +37,10 @@ setupIonicReact({
 })
 
 const App: React.FC = () => {
+  const [rolUsuario, setRolUsuario] = useState(1)
+  console.log('rol ', rolUsuario)
+  const [opcionSeleccionada, setOpcionSeleccionada] = useState(1)
+
   useEffect(() => {
     CapacitorApp.addListener('backButton', ({ canGoBack }) => {
       //TODO canGoBack?
@@ -72,22 +76,25 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonSplitPane contentId='main'>
-          <Menu />
+          <Menu
+            setOpcionSeleccionada={setOpcionSeleccionada}
+            rolUsuario={rolUsuario ?? 1}
+          />
           <IonRouterOutlet id='main'>
             <Route path='/' exact={true}>
               <Redirect to='/portal/login' />
             </Route>
             <Route path='/portal/login' exact={true}>
-              <IniciarSesion />
+              <IniciarSesion setRolUsuario={setRolUsuario} />
             </Route>
             <Route path={`/portal/${roles.estudiante}`} exact={true}>
-              <Portal rolUsuario={roles.estudiante} />
+              <Portal rolUsuario={1} opcionSeleccionada={opcionSeleccionada} />
             </Route>
             <Route path={`/portal/${roles.docente}`} exact={true}>
-              <Portal rolUsuario={roles.docente} />
+              <Portal rolUsuario={2} opcionSeleccionada={opcionSeleccionada} />
             </Route>
             <Route path={`/portal/${roles.administrativo}`} exact={true}>
-              <Portal rolUsuario={roles.administrativo} />
+              <Portal rolUsuario={3} opcionSeleccionada={opcionSeleccionada} />
             </Route>
           </IonRouterOutlet>
         </IonSplitPane>

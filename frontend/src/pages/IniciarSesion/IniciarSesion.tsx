@@ -5,7 +5,11 @@ import AnimatedName from '../../components/AnimatedName/AnimatedName'
 import LoginForm from '../../components/LoginForm/LoginForm'
 import './IniciarSesion.css'
 
-const IniciarSesion: React.FC = () => {
+export interface IiniciarSesionProps {
+  setRolUsuario: (rolUsuario: number) => void
+}
+
+const IniciarSesion: React.FC<IiniciarSesionProps> = ({ setRolUsuario }) => {
   const logoAnimation = createRef<CreateAnimation>()
   const footerAnimation = createRef<CreateAnimation>()
 
@@ -49,7 +53,7 @@ const IniciarSesion: React.FC = () => {
         <br />
         <AnimatedName />
         <br />
-        <LoginForm />
+        <LoginForm setRolUsuario={setRolUsuario} />
       </IonContent>
 
       <CreateAnimation

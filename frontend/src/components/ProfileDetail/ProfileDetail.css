@@ -1,0 +1,20 @@
+.informacion-personal {
+  background-color: #c4dfe6;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  display: grid;
+  gap: 10px;
+}
+
+.informacion-personal div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.informacion-personal span {
+  margin-left: 10px;
+  font-size: 16px;
+  text-align: left;
+}

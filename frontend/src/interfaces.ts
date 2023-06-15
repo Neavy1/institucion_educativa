@@ -13,14 +13,16 @@ export const roles: Iroles = {
 }
 
 export interface IportalProps {
-  rolUsuario: string
+  rolUsuario: number
+  opcionSeleccionada: number
 }
 
-interface Ipestanas {
+export interface Ipestanas {
   iosIcon: string
   mdIcon: string
   titulo: string
   subpaneles: string[]
+  indexSubpanels: number[]
 }
 
 export interface Imetodos {
@@ -39,24 +41,73 @@ export type Iconsultas = Record<
   }
 >
 
-export const pestanasAplicacion: Ipestanas[] = [
+export const pestanasEstudiante: Ipestanas[] = [
   {
     titulo: 'Mis cursos',
     iosIcon: easelSharp,
     mdIcon: easelSharp,
-    subpaneles: ['Notas parciales', 'Asignaturas']
+    subpaneles: ['Notas parciales', 'Asignaturas'],
+    indexSubpanels: [1, 2]
   },
   {
     titulo: 'Horario',
     iosIcon: calendarSharp,
     mdIcon: calendarSharp,
-    subpaneles: ['Ver horario', 'Editar horario']
+    subpaneles: ['Ver horario', 'Editar horario'],
+    indexSubpanels: [3, 4]
   },
   {
     titulo: 'Matrícula académica',
     iosIcon: schoolSharp,
     mdIcon: schoolSharp,
-    subpaneles: ['Pensum de mi programa', 'Historial académico', 'Mi progreso']
+    subpaneles: ['Pensum de mi programa', 'Historial académico', 'Mi progreso'],
+    indexSubpanels: [5, 6]
+  }
+]
+export const pestanasDocente: Ipestanas[] = [
+  {
+    titulo: 'Mis cursos',
+    iosIcon: easelSharp,
+    mdIcon: easelSharp,
+    subpaneles: ['Notas parciales', 'Asignaturas'],
+    indexSubpanels: [1, 2]
+  },
+  {
+    titulo: 'Horario',
+    iosIcon: calendarSharp,
+    mdIcon: calendarSharp,
+    subpaneles: ['Ver horario', 'Editar horario'],
+    indexSubpanels: [3, 4]
+  },
+  {
+    titulo: 'Matrícula académica',
+    iosIcon: schoolSharp,
+    mdIcon: schoolSharp,
+    subpaneles: ['Pensum de mi programa', 'Historial académico', 'Mi progreso'],
+    indexSubpanels: [5, 6]
+  }
+]
+export const pestanasAdministrativo: Ipestanas[] = [
+  {
+    titulo: 'Mis cursos',
+    iosIcon: easelSharp,
+    mdIcon: easelSharp,
+    subpaneles: ['Notas parciales', 'Asignaturas'],
+    indexSubpanels: [1, 2]
+  },
+  {
+    titulo: 'Horario',
+    iosIcon: calendarSharp,
+    mdIcon: calendarSharp,
+    subpaneles: ['Ver horario', 'Editar horario'],
+    indexSubpanels: [3, 4]
+  },
+  {
+    titulo: 'Matrícula académica',
+    iosIcon: schoolSharp,
+    mdIcon: schoolSharp,
+    subpaneles: ['Pensum de mi programa', 'Historial académico', 'Mi progreso'],
+    indexSubpanels: [5, 6]
   }
 ]
 

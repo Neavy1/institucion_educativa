@@ -1,16 +1,25 @@
-import { IonContent, IonTitle } from '@ionic/react'
-import bienvenida from '../../../assets/img/bienvenidaportal.png'
+import { IonContent } from '@ionic/react'
 import './InicioEstudiante.css'
+// import Bienvenida from '../../../components/Welcome/Welcome'
+import Horario from '../../../components/Horario/Horario'
+import DetallesPerfil from '../../../components/ProfileDetail/ProfileDetail'
+import Bienvenida from '../../../components/Welcome/Welcome'
 
-const PortalEstudiante: React.FC = () => {
-  return (
-    <IonContent>
-      <IonTitle className='ion-text-center ion-margin-vertical'>
-        ¡Bienvenido al portal estudiantil!
-      </IonTitle>
-      <img className='imagen' src={bienvenida} alt='Bienvenida'></img>
-    </IonContent>
-  )
+export type Ipaginas = Record<number, JSX.Element>
+const paginasEstudiante: Ipaginas = {
+  1: <Bienvenida />,
+  2: <DetallesPerfil />,
+  3: <Horario />
 }
 
-export default PortalEstudiante
+export interface IcontenidoPortal {
+  opcionSeleccionada: number
+}
+
+const InicioEstudiante: React.FC<IcontenidoPortal> = ({
+  opcionSeleccionada
+}) => {
+  return <IonContent>{paginasEstudiante[3]}</IonContent>
+}
+
+export default InicioEstudiante
